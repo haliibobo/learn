@@ -1,5 +1,7 @@
 package com.github.haliibobo.learn.java.lam;
 
+import com.google.common.base.Objects;
+
 /**
  * @Auther: lizibo
  * @Date: 2018/8/21 21:17
@@ -21,6 +23,20 @@ public class Student {
 
     public String getName() {
         return this.name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return id == student.id &&
+                Objects.equal(name, student.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id, name);
     }
 
     @Override
