@@ -1,5 +1,7 @@
 package com.github.haliibobo.learn.java.tree;
 
+import java.util.Stack;
+
 public class NLR {
     /**
      *            1
@@ -31,22 +33,36 @@ public class NLR {
         node4.right = node6;
         node6.left = node7;
         node6.right = node8;
-        traversal(node1);
+        traversalRecursion(node1);
     }
 
-    public static void traversal(TreeNode root) {
+    /**
+     * 递归
+     * @param root
+     */
+    public static void traversalRecursion(TreeNode root) {
         if (root != null){
             System.out.print(root.value + " ");
-            traversal(root.left);
-            traversal(root.right);
+            traversalRecursion(root.left);
+            traversalRecursion(root.right);
         }
     }
 
-    public static void traversal2(TreeNode root) {
-        while (root != null){
-            System.out.print(root.value + " ");
-            traversal(root.left);
-            traversal(root.right);
+    /**
+     * 非递归
+     * @param root
+     */
+    public static void traversal(TreeNode<Integer> root) {
+        Stack<Integer>  stack = new Stack<>();
+        TreeNode<Integer> curNode = root;
+        stack.push(root.value);
+        while (curNode != null || !stack.empty()){
+                if (curNode.left !=null) {
+                    stack.push(root.value);
+                }else {
+
+                }
+
         }
     }
 }

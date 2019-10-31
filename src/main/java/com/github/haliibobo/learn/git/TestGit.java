@@ -1,4 +1,4 @@
-package com.jd.commons.testGit;
+package com.github.haliibobo.learn.git;
 
 import com.jcraft.jsch.Session;
 import java.io.File;
@@ -64,8 +64,7 @@ public class TestGit {
                 pullCmd.call();
                 //System.out.println("commit log:" + git.getRepository().readCommitEditMsg());
                 Iterable<RevCommit> log = git.log().call();
-                for (Iterator<RevCommit> iterator = log.iterator(); iterator.hasNext();) {
-                    RevCommit rev = iterator.next();
+                for (RevCommit rev : log) {
                     System.out.println(rev.getCommitTime());
                     System.out.println(rev.getFullMessage());
                     System.out.println("---- ***** -----");
@@ -77,7 +76,9 @@ public class TestGit {
                 System.out.println("pull git failed: " + repoGitDir.getAbsolutePath());
                 e.printStackTrace();
             } finally {
-                if (repo != null) repo.close();
+                if (repo != null) {
+                    repo.close();
+                }
             }
         }
     }

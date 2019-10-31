@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class TsetS {
     public static void main(String[] args) {
-        String path ="/user/recsys/recpro/unifiedfeed/promotion/address_sensitive/201902181817";
+        String path ="/user/recsys/recpro/unifiedfeed/iteminfo/detaildiff/201910200000";
         String offTime = path.substring(path.lastIndexOf("/")+1);
         DateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
         int tmp =0;
