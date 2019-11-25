@@ -40,10 +40,10 @@ public class BinaryTree {
             if (pre[0] == in[i]) {
                 //重建左子树
                 root.left = reConstructBinaryTree(Arrays.copyOfRange(pre, 1, i + 1),
-                        Arrays.copyOfRange(in, 0, i));
+                    Arrays.copyOfRange(in, 0, i));
                 //重建右子树
                 root.right = reConstructBinaryTree(Arrays.copyOfRange(pre, i + 1, pre.length),
-                        Arrays.copyOfRange(in, i + 1, in.length));
+                    Arrays.copyOfRange(in, i + 1, in.length));
             }
         }
         return root;

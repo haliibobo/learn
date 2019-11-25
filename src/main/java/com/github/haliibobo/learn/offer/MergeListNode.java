@@ -9,10 +9,6 @@ package com.github.haliibobo.learn.offer;
  * @description describe what this class do
  */
 public class MergeListNode {
-
-
-
-
     //非递归
     private ListNode Merge(ListNode list1, ListNode list2) {
         if (list1 == null) {

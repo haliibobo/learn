@@ -18,7 +18,7 @@ public class CollectionUtil {
     public static void main(String[] args){
         List<String>  list=Collections.singletonList("string");
         Optional<Map<String,Double>> optional =Optional.ofNullable(getRbcidMap());
-        optional.ifPresent( map->System.out.println(map));
+        optional.ifPresent(System.out::println);
 
         System.out.println(optional.get());
     }
