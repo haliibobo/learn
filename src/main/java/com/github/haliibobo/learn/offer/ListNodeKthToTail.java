@@ -4,15 +4,7 @@ public class ListNodeKthToTail {
 
     //输入一个链表，输出该链表中倒数第k个结点
     //链表数据结构
-    static class ListNode {
 
-        int val;
-        ListNode next = null;
-
-        ListNode(int val) {
-            this.val = val;
-        }
-    }
 
     //1 ->2 ->3 ->4 ->5 找到倒数第五个 因为head指向链表第一个结点 走k-1步到达第k个
     //TODO 设置两个指针，p2指针先走（k-1）步，然后再一起走，当p2为最后一个时，p1就为倒数第k个

@@ -60,13 +60,13 @@ public class JumpFloor {
      *aN= a(N-1)+ a(N-2)
      */
     private static int jumpFloor(int n) {
-        if (n <= 0) {
+        if (n < 0) {
             return 0;
-        }
-        if (n == 1 || n == 2) {
+
+        }else  if (n <=2){
             return n;
         }
-        return jumpFloor(n - 2) + jumpFloor(n - 1);
+        return jumpFloor(n-1) +jumpFloor(n-2);
     }
 
     /*
