@@ -1,12 +1,15 @@
 package com.github.haliibobo.learn.offer;
 
+import org.junit.Test;
+
 public class ReplaceSpace {
 
     /*
      *请实现一个函数，将一个字符串中的每个空格替换成“%20”。
      *例如，当字符串为We Are Happy.则经过替换之后的字符串为We%20Are%20Happy。
      */
-    public static void main(String[] args) {
+    @Test
+    public  void solution() {
         StringBuffer stringBuffer = new StringBuffer();
         System.out.println(stringBuffer.length());
         stringBuffer.append("We are happy");
@@ -19,43 +22,61 @@ public class ReplaceSpace {
           从前往后替换，后面的字符要不断往后移动，要多次移动，所以效率低下
           从后往前，先计算需要多少空间，然后从后往前移动，则每个字符只为移动一次，这样效率更高一点。
     */
-    private static String replaceSpace(StringBuffer stringBuffer) {
-        if (stringBuffer == null) {
+    private  String replaceSpace(StringBuffer str) {
+        if (str == null) {
             return null;
         }
-        if (stringBuffer.length() == 0) {
+        if (str.length() == 0) {
             return "";
         }
-        //TODO 做错的地方 分割字符串获取分割以后字符数组的长度 空格在字符串末尾不通过
-        /*int spaceCount = stringBuffer.toString().split(" ").length;
-        if (spaceCount <= 1) {
-            return stringBuffer.toString();
-        }*/
-        int spaceCount = 0;
-        for(int i = 0; i< stringBuffer.length();i ++){
-            if(stringBuffer.charAt(i) == ' '){
-                spaceCount++;
-            }
+        int spaceCount = str.toString().split(" ",-1).length -1;
+        if (spaceCount < 0) {
+            return str.toString();
         }
         //计算插入以后的字符串长度
-        int oldLength = stringBuffer.length();
-        int newLength = stringBuffer.length() + spaceCount * 2;
+        int oldLength = str.length();
+        int newLength = str.length() + spaceCount * 2;
         //重置长度
-        stringBuffer.setLength(newLength);
-        //TODO 做错的地方 直接使用newLength取字符 导致数组越界
-        newLength--;
+        str.setLength(newLength);
+        int cur = newLength -1;
 
-        //依次拷贝
+        //依次拷贝,从后往前
         for (int i = oldLength - 1; i >= 0; i--) {
-            if (stringBuffer.charAt(i) != ' ') {
-                //TODO 做错的地方，使用oldLength 应该使用指针i
-                stringBuffer.setCharAt(newLength--, stringBuffer.charAt(i));
+            if (str.charAt(i) != ' ') {
+                str.setCharAt(cur--, str.charAt(i));
             } else {
-                stringBuffer.setCharAt(newLength--, '0');
-                stringBuffer.setCharAt(newLength--, '2');
-                stringBuffer.setCharAt(newLength--, '%');
+                str.setCharAt(cur--, '0');
+                str.setCharAt(cur--, '2');
+                str.setCharAt(cur--, '%');
             }
         }
-        return stringBuffer.toString();
+        return str.toString();
+    }
+
+    private  String replaceSpace2(StringBuffer str) {
+        if (str == null) {
+            return null;
+        }
+        if (str.length() == 0) {
+            return "";
+        }
+        return str.toString().replace(" ","%20");
+    }
+    private  String replaceSpace3(StringBuffer str) {
+        if (str == null) {
+            return null;
+        }
+        if (str.length() == 0) {
+            return "";
+        }
+        StringBuffer s = new StringBuffer();
+        for (char c : str.toString().toCharArray()) {
+            if (c == ' '){
+                s.append("%20");
+            }else {
+                s.append(c);
+            }
+        }
+        return s.toString();
     }
 }

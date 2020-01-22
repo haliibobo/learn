@@ -16,12 +16,13 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
  * @version 1.0
  * @date 2019-10-14 20:39
  * @description describe what this class do
+ * https://github.com/eclipse/jgit/blob/f40b39345cd9b54473ee871bff401fe3d394ffe3/org.eclipse.jgit.test/tst/org/eclipse/jgit/api/CommitAndLogCommandTest.java#L303-L321
  */
 public class GitTest2 {
 
     public static void main(String[] args) throws IOException, GitAPIException {
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        Repository repo = builder.setGitDir(new File("localrepositary"+"\\.git")).setMustExist(true).build();
+        Repository repo = builder.setGitDir(new File("https://github.com/haliibobo/learn.git")).setMustExist(true).build();
         Git git = new Git(repo);
         Iterable<RevCommit> log = git.log().call();
         for (Iterator<RevCommit> iterator = log.iterator(); iterator.hasNext();) {

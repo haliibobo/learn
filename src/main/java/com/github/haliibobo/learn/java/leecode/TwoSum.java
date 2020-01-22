@@ -9,7 +9,7 @@ import java.util.Map;
  * @author lizibo
  * @version 1.0
  * @date 2019-06-16 19:27
- * @description describe what this class do
+ * @description https://leetcode-cn.com/problems/two-sum/
  */
 public class TwoSum {
 
