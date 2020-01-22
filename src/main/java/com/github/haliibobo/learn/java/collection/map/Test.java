@@ -1,5 +1,6 @@
 package com.github.haliibobo.learn.java.collection.map;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -33,9 +34,12 @@ public class Test {
         Map<String,Integer> new2 = new LinkedHashMap<>();
         System.out.println(new1);
         new1.forEach(e -> new2.put(e.getKey(),e.getValue()));
-
-        System.out.println(new2);
+        System.out.println((ArrayList & Serializable) new1);
 
     }
-
+    public static <K, V extends Comparable<? super V>> Comparator<Map.Entry<K,V>> comparingByValue() {
+        return (Comparator<Map.Entry<K, V>> & Serializable)
+            (c1, c2) -> c1.getValue().compareTo(c2.getValue());
+        //return Comparator.comparing(Entry::getValue);
+    }
 }

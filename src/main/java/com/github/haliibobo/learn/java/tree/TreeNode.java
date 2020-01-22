@@ -1,8 +1,8 @@
 package com.github.haliibobo.learn.java.tree;
 
 public class TreeNode<T> {
-    public TreeNode left;
-    public TreeNode right;
+    public TreeNode<T> left;
+    public TreeNode<T> right;
     public T value;
 
     public TreeNode (T value) {

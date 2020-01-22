@@ -2,6 +2,9 @@ package com.github.haliibobo.learn.java.tree;
 
 import java.util.Stack;
 
+/**
+ * 前序遍历
+ */
 public class NLR {
     /**
      *            1
@@ -17,14 +20,14 @@ public class NLR {
      */
     public static void main(String[] args) {
 
-        TreeNode node1 = new TreeNode<>(1);
-        TreeNode node2 = new TreeNode<>(2);
-        TreeNode node3 = new TreeNode<>(3);
-        TreeNode node4 = new TreeNode<>(4);
-        TreeNode node5 = new TreeNode<>(5);
-        TreeNode node6 = new TreeNode<>(6);
-        TreeNode node7 = new TreeNode<>(7);
-        TreeNode node8 = new TreeNode<>(8);
+        TreeNode<Integer> node1 = new TreeNode<>(1);
+        TreeNode<Integer> node2 = new TreeNode<>(2);
+        TreeNode<Integer> node3 = new TreeNode<>(3);
+        TreeNode<Integer> node4 = new TreeNode<>(4);
+        TreeNode<Integer> node5 = new TreeNode<>(5);
+        TreeNode<Integer> node6 = new TreeNode<>(6);
+        TreeNode<Integer> node7 = new TreeNode<>(7);
+        TreeNode<Integer> node8 = new TreeNode<>(8);
 
         node1.left = node2;
         node1.right = node3;
@@ -34,6 +37,10 @@ public class NLR {
         node6.left = node7;
         node6.right = node8;
         traversalRecursion(node1);
+        System.out.println();
+        traversal(node1);
+        System.out.println();
+        nonRecurPreTraverse(node1);
     }
 
     /**
@@ -53,16 +60,39 @@ public class NLR {
      * @param root
      */
     public static void traversal(TreeNode<Integer> root) {
-        Stack<Integer>  stack = new Stack<>();
+        Stack<TreeNode<Integer>>  stack = new Stack<>();
         TreeNode<Integer> curNode = root;
-        stack.push(root.value);
         while (curNode != null || !stack.empty()){
-                if (curNode.left !=null) {
-                    stack.push(root.value);
-                }else {
-
+            while (curNode != null) {
+                System.out.print(curNode.value + " ");
+                if (curNode.right != null) {
+                    stack.push(curNode.right);
                 }
+                curNode = curNode.left;
+            }
+            if (!stack.empty()) {
+                curNode = stack.pop();
+            }
+        }
+    }
 
+    //非递归前序遍历二叉树
+    private static void nonRecurPreTraverse(TreeNode root) {
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode currentNode;
+        currentNode = root;
+        while (currentNode != null || !stack.isEmpty()) {
+            while (currentNode != null)//一直往一个方向走
+            {
+                System.out.print(currentNode.value + " ");//visit
+                stack.push(currentNode);
+                currentNode = currentNode.left;
+            }
+
+            if (!stack.isEmpty())//变换方向
+            {
+                currentNode = stack.pop().right;
+            }
         }
     }
 }

@@ -13,15 +13,10 @@ import org.eclipse.jgit.transport.JschConfigSessionFactory;
 import org.eclipse.jgit.transport.OpenSshConfig;
 import org.eclipse.jgit.transport.SshSessionFactory;
 
-/**
- * @author weiwenwen
- * @date 2019/10/14 18:44
- * @description TODO
- */
 public class TestGit {
 
     public static void main(String[] args) throws Exception {
-        File localDir = new File("docs");
+        File localDir = new File("XXX");
         if (!localDir.exists()) {
             gitClone("****.git", localDir, "master");
         }
