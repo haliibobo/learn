@@ -1,11 +1,7 @@
-package com.github.haliibobo.learn.java.leecode;
+package com.github.haliibobo.learn.leecode;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * say something.

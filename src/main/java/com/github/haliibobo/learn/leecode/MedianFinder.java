@@ -1,4 +1,4 @@
-package com.github.haliibobo.learn.java.leecode;
+package com.github.haliibobo.learn.leecode;
 
 import java.util.Comparator;
 import java.util.PriorityQueue;

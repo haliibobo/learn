@@ -5,3 +5,4 @@ find ./*/.git  -name 'config' |xargs grep  -ri "http://lizibo@git.xx.com/a" -l |
 grep  -rl 'http://lizibo@git.xx.com/a' ./*/.git/config | xargs sed -i '' "s/http:\/\/lizibo@git.xx.com\/a/ssh:\/\/lizibo@git.xx.com:443/g"
 which sed
 man sed
+sort np.res  ob.res  ob.res  | uniq -u > np-ob
