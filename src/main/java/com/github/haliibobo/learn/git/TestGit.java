@@ -1,3 +1,4 @@
+/*
 package com.github.haliibobo.learn.git;
 
 import com.jcraft.jsch.Session;
@@ -78,3 +79,4 @@ public class TestGit {
         }
     }
 }
+*/
