@@ -9,21 +9,32 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class Zk {
     private CountDownLatch downLatch = new CountDownLatch(1);
     private CountDownLatch downLatch2 = new CountDownLatch(1);
     private CountDownLatch downLatch3 = new CountDownLatch(1);
+    private CountDownLatch downLatch4 = new CountDownLatch(1);
     private ZooKeeper zooKeeper;
     @Before
     public void setUp() throws Exception {
         zooKeeper =new ZooKeeper("halibobo.cn:2181", 5000, watchedEvent ->{
             if (Watcher.Event.KeeperState.SyncConnected == watchedEvent.getState()) {
-                downLatch3.countDown();
+                if(Watcher.Event.EventType.None == watchedEvent.getType() && null == watchedEvent.getPath()){
+                    downLatch3.countDown();
+                }
+                if (Watcher.Event.EventType.NodeChildrenChanged == watchedEvent.getType()){
+                    try {
+                        System.out.print("reGetChildren:" + zooKeeper.getChildren(watchedEvent.getPath(),true));
+                    } catch (KeeperException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    downLatch4.countDown();
+                }
             }
         });
         downLatch3.await();
@@ -163,5 +174,33 @@ public class Zk {
         System.out.print(m);
         latch4.await();
         Assert.assertEquals("hello zk async changed", m.get("v"));
+    }
+
+    //同步获取叶子节点数据
+    @Test
+    public void getChildrenSync() throws InterruptedException, KeeperException {
+        List<String> children = zooKeeper.getChildren("/halibobo",true);
+        System.out.println("getChildren" + children);
+        String ss =zooKeeper.create("/halibobo/tmp","".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL);
+        System.out.println(ss);
+        downLatch4.await();
+    }
+
+    //异步获取叶子节点数据
+    @Test
+    public void getChildrenAsync() throws InterruptedException, KeeperException {
+        CountDownLatch tmp = new CountDownLatch(1);
+        zooKeeper.getChildren("/halibobo",true,(rc,path, ctx, children,  stat) ->{
+            System.out.println("rc: " + rc);
+            System.out.println("path: " + path);
+            System.out.println("ctx: " + ctx);
+            System.out.println("children: " + children);
+            System.out.println("stat: " + stat);
+            tmp.countDown();
+        },null);
+        tmp.await();
+        String ss =zooKeeper.create("/halibobo/tmp","".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.EPHEMERAL);
+        System.out.println(ss);
+        downLatch4.await();
     }
 }

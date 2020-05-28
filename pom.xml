@@ -301,7 +301,7 @@
         <!-- https://mvnrepository.com/artifact/org.apache.curator/curator-recipes -->
         <dependency>
             <groupId>org.apache.curator</groupId>
-            <artifactId>curator-recipes</artifactId>
+            <artifactId>curator-framework</artifactId>
             <version>4.3.0</version>
             <exclusions>
                 <exclusion>
