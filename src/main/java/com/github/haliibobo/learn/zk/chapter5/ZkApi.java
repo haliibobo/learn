@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
-public class Zk {
+public class ZkApi {
     private CountDownLatch downLatch = new CountDownLatch(1);
     private CountDownLatch downLatch2 = new CountDownLatch(1);
     private CountDownLatch downLatch3 = new CountDownLatch(1);
@@ -27,13 +27,36 @@ public class Zk {
                 if(Watcher.Event.EventType.None == watchedEvent.getType() && null == watchedEvent.getPath()){
                     downLatch3.countDown();
                 }
-                if (Watcher.Event.EventType.NodeChildrenChanged == watchedEvent.getType()){
-                    try {
-                        System.out.print("reGetChildren:" + zooKeeper.getChildren(watchedEvent.getPath(),true));
-                    } catch (KeeperException | InterruptedException e) {
-                        e.printStackTrace();
+                try {
+                    switch (watchedEvent.getType()){
+                        case NodeChildrenChanged: {
+                            System.out.print("reGetChildren:" +
+                                    zooKeeper.getChildren(watchedEvent.getPath(),true));
+                            downLatch4.countDown();
+                            break;
+                        }
+                        case NodeCreated: {
+                            System.out.println("Node("+ watchedEvent.getPath() +") created");
+                            //监听事件通知是一次性的，一旦触发，该监听器失效，因此需要反复注册监听器
+                            zooKeeper.exists(watchedEvent.getPath(),true);
+                            downLatch4.countDown();
+                            break;
+                        }
+                        case NodeDeleted: {
+                            System.out.println("Node("+ watchedEvent.getPath() +") deleted");
+                            zooKeeper.exists(watchedEvent.getPath(),true);
+                            downLatch4.countDown();
+                            break;
+                        }
+                        case NodeDataChanged: {
+                            System.out.println("Node("+ watchedEvent.getPath() +") dataChanged");
+                            zooKeeper.exists(watchedEvent.getPath(),true);
+                            downLatch4.countDown();
+                            break;
+                        }
                     }
-                    downLatch4.countDown();
+                } catch (KeeperException | InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -167,9 +190,9 @@ public class Zk {
             latch2.countDown();
         },m);
         latch2.await();
-        zooKeeper.setData(m.get("p"),"hello zk async changed".getBytes(StandardCharsets.UTF_8),-1, (rc, path, ctx, stat) -> {
-            latch3.countDown();
-        },m);
+        zooKeeper.setData(m.get("p"),"hello zk async changed".getBytes(StandardCharsets.UTF_8),-1,
+                (rc, path, ctx, stat) -> latch3.countDown()
+        ,m);
         latch3.await();
         System.out.print(m);
         latch4.await();
@@ -203,4 +226,71 @@ public class Zk {
         System.out.println(ss);
         downLatch4.await();
     }
+
+    /**
+     * 同步修改节点数据.
+     * version cas原理 compare and swap
+     * 期望值版本号version -1 基于最新版本更新，对更新操作没有原子性要求
+     * @throws InterruptedException
+     * @throws KeeperException
+     */
+    @Test
+    public void setDataSync() throws InterruptedException, KeeperException {
+        String path =zooKeeper.create("/halibobo/tmp","hello zk".getBytes(StandardCharsets.UTF_8),
+                ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+        Stat stat= zooKeeper.setData(path,"hello zk changed".getBytes(StandardCharsets.UTF_8),-1);
+        System.out.println(stat.getCzxid() +","+stat.getMzxid() +"," +stat.getVersion());
+        Stat stat2 = zooKeeper.setData(path,"hello zk changed".getBytes(StandardCharsets.UTF_8),stat.getVersion());
+        System.out.println(stat2.getCzxid() +","+stat2.getMzxid() +"," +stat2.getVersion());
+        try {
+            zooKeeper.setData(path,"hell zk".getBytes(StandardCharsets.UTF_8),stat.getVersion());
+        }catch (KeeperException e){
+            System.out.print(e.getMessage());
+        }
+    }
+
+
+    /**
+     * 异步修改节点数据.
+     * version cas原理 compare and swap
+     * 期望值版本号version -1 基于最新版本更新，对更新操作没有原子性要求
+     * @throws InterruptedException
+     * @throws KeeperException
+     */
+    @Test
+    public void setDataAsync() throws InterruptedException, KeeperException {
+        String path =zooKeeper.create("/halibobo/tmp","hello zk".getBytes(StandardCharsets.UTF_8),
+                ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        zooKeeper.setData(path,"hello zk changed async".getBytes(StandardCharsets.UTF_8),-1,(rt,p,ctx,stat) ->{
+              if(rt == 0){
+                  try {
+                      System.out.print("getNewData:" + new String(zooKeeper.getData(p,true,stat)));
+                  } catch (KeeperException | InterruptedException e) {
+                      e.printStackTrace();
+                  }
+                  countDownLatch.countDown();
+              }
+        },null);
+        countDownLatch.await();
+    }
+
+    /**
+     * 同步判断节点是否存在 通过exit 注册的监听事件只对 该节点创建、删除、更新 生效，不会对子节点生效
+     */
+    @Test
+    public void exitNodeSync() throws InterruptedException, KeeperException {
+        String path = "/halibobo/tmp";
+        zooKeeper.exists(path,true);
+        zooKeeper.create(path,"hello zk".getBytes(StandardCharsets.UTF_8),
+                ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+        zooKeeper.setData(path,"hello zk changed async".getBytes(StandardCharsets.UTF_8),-1);
+        zooKeeper.create(path+"/c1","".getBytes(),ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+        zooKeeper.delete(path+"/c1",-1);
+        zooKeeper.delete(path,-1);
+        downLatch4.await();
+    }
+
+
+
 }

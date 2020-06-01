@@ -8,4 +8,4 @@ path ="./"
 if __name__ == "__main__" :
   fileList = os.listdir(path)
   for f in fileList:
-    print os.path.splitext(f)[1]
+    print(os.path.splitext(f)[1])

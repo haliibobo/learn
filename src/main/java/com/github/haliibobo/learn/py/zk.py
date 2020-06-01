@@ -8,15 +8,17 @@ from kazoo.retry import KazooRetry
 
 # init
 def init():
-  client = KazooClient(hosts='127.0.0.1:2181')
-  client.start()
-  f = open('./init.json', 'rb')
-  content = f.read()
-  items = json.loads(content).items()
-  for key, value in items:
-    if (not client.exists('/init/' + key)):
-      client.create('/init/' + key,
-                    value.encode(encoding="utf-8"), makepath=True)
+    client = KazooClient(hosts='127.0.0.1:2181')
+    client.start()
+    f = open('./init.json', 'rb')
+    content = f.read()
+    items = json.loads(content).items()
+    client.get_children()
+    for key, value in items:
+        if not client.exists('/init/' + key):
+            client.create('/init/' + key,
+                          value.encode(encoding="utf-8"), makepath=True)
+
 
 if __name__ == '__main__':
-  init()
+    init()
