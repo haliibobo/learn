@@ -19,12 +19,11 @@ import java.io.InputStreamReader;
 public class Test {
 
     public static void main(String[] args) {
-        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("userprofile.conf");
+        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("learn.conf");
         Config config = ConfigFactory.parseReader(new InputStreamReader(in)).resolve();
 
         String s = config.resolve().root().render(ConfigRenderOptions.concise());
         System.out.println(s);
-        //String json = s.substring(0,s.length()-2).replaceAll("Config\\(SimpleConfigObject\\(","");
         JsonElement jsonElement = GsonUtil.fromJson(s, JsonElement.class);
         System.out.println(jsonElement);
     }
