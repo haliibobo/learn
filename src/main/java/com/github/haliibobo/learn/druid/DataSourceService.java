@@ -15,7 +15,7 @@ import org.junit.Test;
 /**
  *
  * @author lizibo
- *
+ *create user 'halibobo'@'%' identified by 'DDC7wq#v&Y4B'
  */
 public class DataSourceService {
     private static Log log = LogFactory.getLog(DataSourceService.class);
@@ -107,9 +107,9 @@ public class DataSourceService {
         Map<String,String> parameters = new HashMap<>();
         parameters.put("code","halibobo");
         parameters.put("driver","com.mysql.cj.jdbc.Driver");
-        parameters.put("url","jdbc:mysql://halibobo.cn:3306/wordpress?serverTimezone=Asia/Chongqing&useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&useSSL=false&verifyServerCertificate=false&autoReconnct=true&autoReconnectForPools=true&allowMultiQueries=true");
-        parameters.put("user","root");
-        parameters.put("pw","（19911205_Lzb");
+        parameters.put("url","jdbc:mysql://halibobo.cn:3306/wordpress?serverTimezone=Asia/Chongqing&useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&useSSL=true&verifyServerCertificate=false&autoReconnct=true&autoReconnectForPools=true&allowMultiQueries=true");
+        parameters.put("user","halibobo");
+        parameters.put("pw","DDC7wq#v&Y4B");
         dataSource =DataSourceService.fetchDataSource(parameters);
     }
 
