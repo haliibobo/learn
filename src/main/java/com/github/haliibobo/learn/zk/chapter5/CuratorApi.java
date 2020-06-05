@@ -23,7 +23,7 @@ public class CuratorApi {
     private CuratorFramework client;
     private String path;
     private CountDownLatch semaphore;
-    private ExecutorService tp = Executors.newFixedThreadPool(2);
+    private ExecutorService tp = Executors.newFixedThreadPool(1);
 
     @Before
     public void setUp() throws InterruptedException {
@@ -31,8 +31,8 @@ public class CuratorApi {
         path = "/halibobo/curator";
         semaphore = new CountDownLatch(2);
         retryPolicy = new ExponentialBackoffRetry(1000,3);
-        client = CuratorFrameworkFactory.builder().connectString(zkStr).sessionTimeoutMs(5000)
-                .connectionTimeoutMs(3000).retryPolicy(retryPolicy).build();
+        client = CuratorFrameworkFactory.builder().connectString(zkStr).sessionTimeoutMs(50000)
+                .connectionTimeoutMs(30000).retryPolicy(retryPolicy).build();
         client.start();
         client.blockUntilConnected();
     }
@@ -155,27 +155,35 @@ public class CuratorApi {
         PathChildrenCache cache = new PathChildrenCache(client,"/halibobo",true);
         cache.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);
         cache.getListenable().addListener((c,e)->{
+            System.out.println("e.getType():"+e.getType());
             switch (e.getType()){
                 case CHILD_ADDED:
-                    System.out.println("CHILD_ADDED:" + e.getData().getPath());
+                    System.out.println("CHILD_ADDED:" + e.getData().getPath() +"," +new String(e.getData().getData()));
+                    countDownLatch.countDown();
                     break;
                 case CHILD_UPDATED:
-                    System.out.println("CHILD_UPDATED:" + e.getData().getPath());
+                    System.out.println("CHILD_UPDATED:" + e.getData().getPath() +"," +new String(e.getData().getData()));
+                    countDownLatch.countDown();
                     break;
                 case CHILD_REMOVED:
                     System.out.println("CHILD_REMOVED:" + e.getData().getPath());
+                    countDownLatch.countDown();
                     break;
                 default:System.out.println("default:" + e.getData().getPath());
                     break;
             }
-            countDownLatch.countDown();
-        });
-        client.create().withMode(CreateMode.PERSISTENT).forPath("/halibobo/0000","init".getBytes());
+        },tp);
+        client.create().withMode(CreateMode.PERSISTENT).forPath("/halibobo/zk","init".getBytes());
         //countDownLatch.await();
-        client.setData().forPath("/halibobo/0000","good".getBytes());
+        client.setData().forPath("/halibobo/zk","good".getBytes());
+        client.setData().forPath("/halibobo/zk","good2".getBytes());
+        client.setData().forPath("/halibobo/zk","good3".getBytes());
+        client.setData().forPath("/halibobo/zk","good4".getBytes());
+        client.setData().forPath("/halibobo/zk","good5".getBytes());
         //countDownLatch.await();
-        client.setData().forPath("/halibobo","halibobo".getBytes());
-        //client.delete().deletingChildrenIfNeeded().forPath("/halibobo/0000");
+       //client.setData().forPath("/halibobo","halibobo".getBytes());
+        client.delete().deletingChildrenIfNeeded().forPath("/halibobo/zk");
         countDownLatch.await();
+        tp.shutdown();
     }
 }

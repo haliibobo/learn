@@ -6,3 +6,7 @@ grep  -rl 'http://lizibo@git.xx.com/a' ./*/.git/config | xargs sed -i '' "s/http
 which sed
 man sed
 sort np.res  ob.res  ob.res  | uniq -u > np-ob
+
+sort a b | uniq > c   # c 是 a 并 b
+sort a b | uniq -d > c   # c 是 a 交 b
+sort a b b | uniq -u > c   # c 是 a - b
