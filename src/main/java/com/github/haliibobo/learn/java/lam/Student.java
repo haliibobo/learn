@@ -1,5 +1,6 @@
 package com.github.haliibobo.learn.java.lam;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 /**
@@ -11,10 +12,18 @@ public class Student {
 
     private int id ;
     private String name;
+    private int score;
+    private String sub;
 
     public Student(int id,String name){
         this.id=id;
         this.name=name;
+    }
+    public Student(int id,String name,int score,String sub){
+        this.id=id;
+        this.name=name;
+        this.score =score;
+        this.sub =sub;
     }
 
     public void setId(int id) {
@@ -33,6 +42,22 @@ public class Student {
         return this.name;
     }
 
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(String sub) {
+        this.sub = sub;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -49,6 +74,11 @@ public class Student {
 
     @Override
     public String toString() {
-        return "{id:"+this.id+",name:"+this.name+"}";
+        return MoreObjects.toStringHelper(this)
+            .add("id", id)
+            .add("name", name)
+            .add("score", score)
+            .add("sub", sub)
+            .toString();
     }
 }

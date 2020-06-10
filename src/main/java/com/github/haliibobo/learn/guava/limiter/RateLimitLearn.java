@@ -18,6 +18,8 @@ public class RateLimitLearn {
     @Test
     public void test(){
         RateLimiter rateLimiter;
+        System.out.println(Math.sqrt(5));
+        System.out.println(Math.pow(8,1.0/3));
     }
 
 }
