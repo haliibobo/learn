@@ -15,6 +15,7 @@ import org.junit.Test;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CuratorApi {
 
@@ -149,9 +150,14 @@ public class CuratorApi {
         //countDownLatch.await();
     }
 
+    /**
+     * 会合并通知吗？？？？？
+     * @throws Exception
+     */
     @Test
     public void pathChildrenCacheListener() throws Exception {
         CountDownLatch countDownLatch = new CountDownLatch(2);
+        AtomicInteger count = new AtomicInteger(0);
         PathChildrenCache cache = new PathChildrenCache(client,"/halibobo",true);
         cache.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);
         cache.getListenable().addListener((c,e)->{
@@ -160,26 +166,30 @@ public class CuratorApi {
                 case CHILD_ADDED:
                     System.out.println("CHILD_ADDED:" + e.getData().getPath() +"," +new String(e.getData().getData()));
                     countDownLatch.countDown();
+                    System.out.println(count.addAndGet(1));
                     break;
                 case CHILD_UPDATED:
                     System.out.println("CHILD_UPDATED:" + e.getData().getPath() +"," +new String(e.getData().getData()));
                     countDownLatch.countDown();
+                    System.out.println(count.addAndGet(1));
                     break;
                 case CHILD_REMOVED:
                     System.out.println("CHILD_REMOVED:" + e.getData().getPath());
                     countDownLatch.countDown();
+                    System.out.println(count.addAndGet(1));
                     break;
                 default:System.out.println("default:" + e.getData().getPath());
                     break;
             }
         },tp);
-        client.create().withMode(CreateMode.PERSISTENT).forPath("/halibobo/zk","init".getBytes());
+        client.create().orSetData().withMode(CreateMode.PERSISTENT).forPath("/halibobo/zk","init".getBytes());
         //countDownLatch.await();
         client.setData().forPath("/halibobo/zk","good".getBytes());
         client.setData().forPath("/halibobo/zk","good2".getBytes());
         client.setData().forPath("/halibobo/zk","good3".getBytes());
         client.setData().forPath("/halibobo/zk","good4".getBytes());
         client.setData().forPath("/halibobo/zk","good5".getBytes());
+
         //countDownLatch.await();
        //client.setData().forPath("/halibobo","halibobo".getBytes());
         client.delete().deletingChildrenIfNeeded().forPath("/halibobo/zk");

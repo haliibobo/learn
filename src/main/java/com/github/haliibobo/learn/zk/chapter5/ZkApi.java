@@ -18,7 +18,7 @@ public class ZkApi {
     private CountDownLatch downLatch = new CountDownLatch(1);
     private CountDownLatch downLatch2 = new CountDownLatch(1);
     private CountDownLatch downLatch3 = new CountDownLatch(1);
-    private CountDownLatch downLatch4 = new CountDownLatch(1);
+    private CountDownLatch downLatch4 = new CountDownLatch(7);
     private ZooKeeper zooKeeper;
     @Before
     public void setUp() throws Exception {
@@ -285,8 +285,10 @@ public class ZkApi {
         zooKeeper.create(path,"hello zk".getBytes(StandardCharsets.UTF_8),
                 ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
         zooKeeper.setData(path,"hello zk changed async".getBytes(StandardCharsets.UTF_8),-1);
-        zooKeeper.create(path+"/c1","".getBytes(),ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-        zooKeeper.delete(path+"/c1",-1);
+        zooKeeper.setData(path,"hello zk2 changed async".getBytes(StandardCharsets.UTF_8),-1);
+        zooKeeper.setData(path,"hello zk3 changed async".getBytes(StandardCharsets.UTF_8),-1);
+        zooKeeper.setData(path,"hello zk4 changed async".getBytes(StandardCharsets.UTF_8),-1);
+        zooKeeper.setData(path,"hello zk5 changed async".getBytes(StandardCharsets.UTF_8),-1);
         zooKeeper.delete(path,-1);
         downLatch4.await();
     }
