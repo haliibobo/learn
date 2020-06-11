@@ -17,7 +17,7 @@ public class Shell extends Sort {
     @Override
     public void  sort (Comparable [] a){
         System.out.print("[0]:");
-        Sort.show(a);
+        show(a);
         int h = 1;
         while (h<a.length/3){
             h = 3*h + 1 ;
