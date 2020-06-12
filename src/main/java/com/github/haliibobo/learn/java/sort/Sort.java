@@ -8,7 +8,7 @@ import java.util.List;
 
 public abstract class Sort {
 
-    private static int exchNum =0;
+    int exchNum =0;
     //abstract 关键字不可与static 共同修饰
     public  void  sort (Comparable [] a){
         System.out.print("[0]:");
@@ -52,7 +52,7 @@ public abstract class Sort {
     }
     @Test
     public void test() {
-        Integer[]b = {79,48,56,5,4,3,2,1};
+        Integer[]b = {79,56,48,5,4,3,2,1};
         this.sort(b);
         Assert.assertTrue (isSorted(b));
     }

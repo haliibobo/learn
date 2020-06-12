@@ -1,6 +1,7 @@
 package com.github.haliibobo.learn.java.tree;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * 前序遍历
@@ -60,9 +61,9 @@ public class NLR {
      * @param root
      */
     public static void traversal(TreeNode<Integer> root) {
-        Stack<TreeNode<Integer>>  stack = new Stack<>();
+        Deque<TreeNode<Integer>>  stack = new ArrayDeque<>();
         TreeNode<Integer> curNode = root;
-        while (curNode != null || !stack.empty()){
+        while (curNode != null || !stack.isEmpty()){
             while (curNode != null) {
                 System.out.print(curNode.value + " ");
                 if (curNode.right != null) {
@@ -70,7 +71,7 @@ public class NLR {
                 }
                 curNode = curNode.left;
             }
-            if (!stack.empty()) {
+            if (!stack.isEmpty()) {
                 curNode = stack.pop();
             }
         }
@@ -78,7 +79,7 @@ public class NLR {
 
     //非递归前序遍历二叉树
     private static void nonRecurPreTraverse(TreeNode root) {
-        Stack<TreeNode> stack = new Stack<>();
+        Deque<TreeNode> stack = new ArrayDeque<>();
         TreeNode currentNode;
         currentNode = root;
         while (currentNode != null || !stack.isEmpty()) {
