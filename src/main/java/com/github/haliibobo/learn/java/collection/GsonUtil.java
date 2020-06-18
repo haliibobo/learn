@@ -3,225 +3,164 @@ package com.github.haliibobo.learn.java.collection;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 import com.google.gson.TypeAdapter;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * gson工具类.
  * @author Administrator
- *
  */
 public class GsonUtil {
 
- /**
-  * 实现格式化的时间字符串转时间对象
-  */
- private static final String DATEFORMAT_DEFAYLT = "yyyy-MM-dd HH:mm:ss";
- private GsonUtil() {
-     throw new IllegalAccessError("GsonUtil class");
- }
+    /**
+     * 实现格式化的时间字符串转时间对象.
+     */
+    private static final String DATEFORMAT_DEFAYLT = "yyyy-MM-dd HH:mm:ss";
 
- /**
-  * 使用默认的gson对象进行反序列化
-  * @param json
-  * @param typeToken
-  * @return
-  */
- public static <T> T fromJsonDefault(String json, TypeToken<T> typeToken) {
-  Gson gson = new Gson();
-  return gson.fromJson(json, typeToken.getType());
- }
- /**
-  * json字符串转list或者map
-  * @param json
-  * @param typeToken
-  * @return
-  */
- public static <T> T fromJson(String json, TypeToken<T> typeToken) {
-  Gson gson = new GsonBuilder()
-  /**
-   * 重写map的反序列化
-   */
-  .registerTypeAdapter(new TypeToken<Map<String, Object>>() {
-  }.getType(), new MapTypeAdapter()).create();
-  return gson.fromJson(json, typeToken.getType());
- }
+    private  static final InstanceCreator byteBufferInstanceCreator = type -> ByteBuffer.allocate(0);
+    private  static final GsonBuilder gsonBuilder = new GsonBuilder();
 
- /**
-  * json字符串转bean对象
-  * @param json
-  * @param cls
-  * @return
-  */
- public static <T> T fromJson(String json, Class<T> cls) {
-  Gson gson = new GsonBuilder().setDateFormat(DATEFORMAT_DEFAYLT)
-    .create();
-  return gson.fromJson(json, cls);
- }
+    static {
+        gsonBuilder.registerTypeAdapter(ByteBuffer.class,byteBufferInstanceCreator);
+    }
 
- /**
-  * 对象转json
-  * @param obj
-  * @param format
-  * @return
-  */
- public static String toJson(Object obj, boolean format) {
+    private GsonUtil() {
+        throw new IllegalAccessError("GsonUtil class");
+    }
 
-  GsonBuilder gsonBuilder = new GsonBuilder();
-  /**
-   * 设置默认时间格式
-   */
-  gsonBuilder.setDateFormat(DATEFORMAT_DEFAYLT);
+    /**
+     * 使用默认的gson对象进行反序列化.
+     */
+    public static <T> T fromJsonDefault(String json, TypeToken<T> typeToken) {
+        return gsonBuilder.create().fromJson(json, typeToken.getType());
+    }
 
-  /**
-   * 添加格式化设置
-   */
-  if (format) {
-   gsonBuilder.setPrettyPrinting();
-  }
-  Gson gson = gsonBuilder.create();
-  return gson.toJson(obj);
- }
+    /**
+     * json字符串转list或者map.
+     */
+    public static <T> T fromJson(String json, TypeToken<T> typeToken) {
+        Gson gson = gsonBuilder
+            /**
+             * 重写map的反序列化.
+             */
+            .registerTypeAdapter(new TypeToken<Map<String, Object>>() {
+            }.getType(), new MapTypeAdapter()).create();
+        return gson.fromJson(json, typeToken.getType());
+    }
 
- public static class MapTypeAdapter extends TypeAdapter<Object> {
-  @Override
-  public Object read(JsonReader in) throws IOException {
-   JsonToken token = in.peek();
-   switch (token) {
-   case BEGIN_ARRAY:
-    return arrayType(in);
+    /**
+     * json字符串转bean对象.
+     */
+    public static <T> T fromJson(String json, Class<T> cls) {
+        Gson gson = gsonBuilder.setDateFormat(DATEFORMAT_DEFAYLT)
+            .create();
+        return gson.fromJson(json, cls);
+    }
 
-   case BEGIN_OBJECT:
-    return mapType(in);
+    /**
+     * 对象转json.
+     */
+    public static String toJson(Object obj, boolean format) {
+        /**
+         * 设置默认时间格式.
+         */
+        gsonBuilder.setDateFormat(DATEFORMAT_DEFAYLT);
 
-   case STRING:
-    return in.nextString();
+        /**
+         * 添加格式化设置.
+         */
+        if (format) {
+            gsonBuilder.setPrettyPrinting();
+        }
+        Gson gson = gsonBuilder.create();
+        return gson.toJson(obj);
+    }
 
-   case NUMBER:
-    return numberType(in);
+    public static class MapTypeAdapter extends TypeAdapter<Object> {
 
-   case BOOLEAN:
-    return in.nextBoolean();
+        @Override
+        public Object read(JsonReader in) throws IOException {
+            JsonToken token = in.peek();
+            switch (token) {
+                case BEGIN_ARRAY:
+                    return arrayType(in);
 
-   case NULL:
-    in.nextNull();
-    return null;
+                case BEGIN_OBJECT:
+                    return mapType(in);
 
-   default:
-    throw new IllegalStateException();
-   }
-  }
-  @Override
-  public void write(JsonWriter out, Object value) throws IOException {
-   // 序列化无需实现
-  }
-  private Object numberType(JsonReader in ) throws IOException{
-   /**
-    * 改写数字的处理逻辑，将数字值分为整型与浮点型。
-    */
-   double dbNum = in.nextDouble();
+                case STRING:
+                    return in.nextString();
 
-   // 数字超过long的最大值，返回浮点类型
-   if (dbNum > Long.MAX_VALUE) {
-    return dbNum;
-   }
+                case NUMBER:
+                    return numberType(in);
 
-   // 判断数字是否为整数值
-   long lngNum = (long) dbNum;
-   if(dbNum > lngNum){
-    return dbNum;
-   }else if(dbNum < lngNum){
-    return dbNum;
-   } else {
-    return lngNum;
-   }
-  }
-  private Object mapType (JsonReader in ) throws IOException{
-   Map<String, Object> map = new LinkedTreeMap<String, Object>();
-   in.beginObject();
-   while (in.hasNext()) {
-    map.put(in.nextName(), read(in));
-   }
-   in.endObject();
-   return map;
-  }
-  private Object arrayType (JsonReader in ) throws IOException{
-   List<Object> list = Lists.newArrayList();
-   in.beginArray();
-   while (in.hasNext()) {
-    list.add(read(in));
-   }
-   in.endArray();
-   return list;
-  }
+                case BOOLEAN:
+                    return in.nextBoolean();
 
- }
+                case NULL:
+                    in.nextNull();
+                    return null;
 
- /**
-  * 集合深拷贝.
-  */
- @SuppressWarnings("unchecked")
- public static <T> List<T> deepCopy(List<T> src) {
+                default:
+                    throw new IllegalStateException();
+            }
+        }
 
-  List<T> dest = new ArrayList<T>(src.size());
-  try {
-   ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-   ObjectOutputStream out = new ObjectOutputStream(byteOut);
-   out.writeObject(src);
+        @Override
+        public void write(JsonWriter out, Object value) throws IOException {
+            // 序列化无需实现
+        }
 
-   ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
-   ObjectInputStream in = new ObjectInputStream(byteIn);
-   dest = (List<T>) in.readObject();
+        private Object numberType(JsonReader in) throws IOException {
+            /**
+             * 改写数字的处理逻辑，将数字值分为整型与浮点型.
+             */
+            double dbNum = in.nextDouble();
 
-  } catch (Exception e) {
-  }
-  return dest;
- }
+            // 数字超过long的最大值，返回浮点类型
+            if (dbNum > Long.MAX_VALUE) {
+                return dbNum;
+            }
 
- public  static void main(String[] args){
-  String si_prsdata_redis ="[{room:\"prsDataLf\",configId:\"jim://2672240584298048807/3408\",token:\"jim://2672240584298048807/3408\"}," +
-    "{room:\"prsDataMjq\",configId:\"jim://2674911953408580583/3357\",token:\"jim://2674911953408580583/3357\"}," +
-    "{room:\"prsDataHt\",configId:\"jim://2570476378403829031/5037\",token:\"jim://2570476378403829031/5037\"}]";
+            // 判断数字是否为整数值
+            long lngNum = (long) dbNum;
+            if (dbNum > lngNum) {
+                return dbNum;
+            } else if (dbNum < lngNum) {
+                return dbNum;
+            } else {
+                return lngNum;
+            }
+        }
 
-  List<Map<String,String>> list=GsonUtil.fromJson(si_prsdata_redis,new TypeToken<List<Map<String,String>>>(){});
-  System.out.println(list);
-  //leiyipin
-  String map ="{\"mj3\":[{\"st\":1550163600,\"et\":1551369599,\"pid\":50000123768,\"p_cd\":4,\"m\":300.2,\"n\":30.0}]}";
+        private Object mapType(JsonReader in) throws IOException {
+            Map<String, Object> map = new LinkedTreeMap<String, Object>();
+            in.beginObject();
+            while (in.hasNext()) {
+                map.put(in.nextName(), read(in));
+            }
+            in.endObject();
+            return map;
+        }
 
-  Map<String, String> dataMapOld = new HashMap<String, String>();
-  Map<String, String> dataMap = new HashMap<String, String>();
-  Map<String,Object> maps = GsonUtil.fromJson(map, new TypeToken<Map<String, Object>>() {
-  });
-  for (Object obj : maps.keySet()){
-   dataMap.put(obj.toString(), GsonUtil.toJson(maps.get(obj),false));
-   dataMapOld.put(obj.toString(), maps.get(obj).toString());
-  }
-  System.out.println("原始json:");
-  System.out.println(map);
-  System.out.println("旧map:");
-  System.out.println(dataMapOld);
-  System.out.println("旧map 调用json:");
-  System.out.println(GsonUtil.toJson(dataMapOld,false));
-  System.out.println("新map:");
-  System.out.println(dataMap);
-  System.out.println("旧map 调用json:");
-  System.out.println(GsonUtil.toJson(dataMap,false));
+        private Object arrayType(JsonReader in) throws IOException {
+            List<Object> list = Lists.newArrayList();
+            in.beginArray();
+            while (in.hasNext()) {
+                list.add(read(in));
+            }
+            in.endArray();
+            return list;
+        }
 
-  //String
-
- }
-
+    }
 }

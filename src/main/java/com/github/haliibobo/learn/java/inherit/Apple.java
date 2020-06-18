@@ -10,4 +10,13 @@ package com.github.haliibobo.learn.java.inherit;
  */
 public class Apple extends Fruit {
 
+    private int id ;
+
+    public Apple() {
+    }
+
+    public  synchronized Apple setId(int id) {
+        this.id = id;
+        return this;
+    }
 }
