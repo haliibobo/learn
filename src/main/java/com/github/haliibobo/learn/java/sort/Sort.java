@@ -52,7 +52,7 @@ public abstract class Sort {
     }
     @Test
     public void test() {
-        Integer[]b = {79,56,48,5,4,3,2,1};
+        Integer[]b = {56,1,79,5,4,3,2,48};
         this.sort(b);
         Assert.assertTrue (isSorted(b));
     }
