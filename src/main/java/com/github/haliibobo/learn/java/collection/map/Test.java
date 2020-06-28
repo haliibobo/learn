@@ -27,14 +27,16 @@ public class Test {
         old.put("aaa",111);
         old.put("ccc",333);
         old.put("bbb",222);
-
-        System.out.println(old);
+        old.put("dddd",null);
+        System.out.println(old.containsKey("dddd"));
+        System.out.println(old.containsKey("ffff"));
+       /* System.out.println(old);
         List<Entry<String,Integer>> new1 = old.entrySet().stream().sorted(Comparator.comparingInt(Entry::getValue))
             .collect(Collectors.toList());
         Map<String,Integer> new2 = new LinkedHashMap<>();
         System.out.println(new1);
         new1.forEach(e -> new2.put(e.getKey(),e.getValue()));
-        System.out.println((ArrayList & Serializable) new1);
+        System.out.println((ArrayList & Serializable) new1);*/
 
     }
     public static <K, V extends Comparable<? super V>> Comparator<Map.Entry<K,V>> comparingByValue() {

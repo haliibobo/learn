@@ -6,6 +6,8 @@ import sun.misc.Unsafe;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Test {
 
@@ -13,10 +15,10 @@ public class Test {
 
     @org.junit.Test
     public void test () throws NoSuchFieldException, IllegalAccessException, InstantiationException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException {
-       // Unsafe unsafe = Unsafe.getUnsafe();
+       Unsafe unsafe = Unsafe.getUnsafe();
         Field f = Unsafe.class.getDeclaredField("theUnsafe");
         f.setAccessible(true);
-        Unsafe unsafe = (Unsafe) f.get(null);
+       // Unsafe unsafe = (Unsafe) f.get(null);
 
         A o1 = new A(6); // constructor
         // prints 1
@@ -26,7 +28,11 @@ public class Test {
         B o2 = B.class.newInstance(); // reflection
         System.out.println( o2.b());
         o2.b(); // prints 1
-
+        CopyOnWriteArrayList<String> copyOnWriteArrayList = new CopyOnWriteArrayList();
+        copyOnWriteArrayList.remove( 1);
+        for (int i = 0; i < copyOnWriteArrayList.size(); i++) {
+            copyOnWriteArrayList.get(i);
+        }
 
 
         //TODO 非静态内部类无法使用反射获取实例

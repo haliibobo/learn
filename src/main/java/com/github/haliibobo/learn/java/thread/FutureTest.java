@@ -3,7 +3,7 @@ package com.github.haliibobo.learn.java.thread;
 import java.util.concurrent.*;
 
 public class FutureTest {
-
+//String
   /*  public static void main(String[] args) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         FutureTask<String> future = new FutureTask<String>(new Callable<String>() {
