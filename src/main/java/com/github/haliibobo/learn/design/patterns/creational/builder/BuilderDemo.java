@@ -1,6 +1,7 @@
 package com.github.haliibobo.learn.design.patterns.creational.builder;
 
 import java.sql.SQLException;
+import java.sql.Statement;
 import javax.sql.DataSource;
 import org.junit.Test;
 
@@ -23,7 +24,9 @@ public class BuilderDemo {
             .driver("com.mysql.cj.jdbc.Driver")
             .password("DDC7wq#v&Y4B")
             .name("test").build();
-        druidSource.getConnection().createStatement().execute("select 1;");
+        Statement statement = druidSource.getConnection().createStatement();
+        statement.execute("select 1;");
+        statement.getResultSet();
     }
 
 }
