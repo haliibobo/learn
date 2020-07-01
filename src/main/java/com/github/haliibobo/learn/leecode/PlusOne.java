@@ -1,6 +1,8 @@
 package com.github.haliibobo.learn.leecode;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+
 import org.junit.Test;
 
 /**
@@ -18,6 +20,12 @@ public class PlusOne {
     public void test(){
         int[] o = {9,9,9,9};
         System.out.println(Arrays.toString(plusOne(o)));
+        LinkedHashMap map = new LinkedHashMap();
+        map.put(1,1);
+        map.put(2,2);
+        map.put(1,1);
+        map.entrySet();
+        System.out.print(map);
 
     }
 
