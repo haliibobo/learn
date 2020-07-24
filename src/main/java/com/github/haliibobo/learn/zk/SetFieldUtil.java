@@ -1,4 +1,4 @@
-package com.github.haliibobo.learn.zk.chapter5;
+package com.github.haliibobo.learn.zk;
 
 import java.lang.reflect.Field;
 

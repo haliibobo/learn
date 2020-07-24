@@ -1,4 +1,4 @@
-package com.github.haliibobo.learn.zk.chapter5;
+package com.github.haliibobo.learn.zk;
 
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;

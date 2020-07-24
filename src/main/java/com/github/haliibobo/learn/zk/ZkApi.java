@@ -1,4 +1,4 @@
-package com.github.haliibobo.learn.zk.chapter5;
+package com.github.haliibobo.learn.zk;
 
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;

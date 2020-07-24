@@ -322,6 +322,17 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-x-async</artifactId>
+            <version>4.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-examples</artifactId>
+            <version>4.3.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
             <version>3.2.0</version>
@@ -376,6 +387,18 @@
             <version>0.10</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.1</version>
+        </dependency>
+
+      <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>4.5.12</version>
+      </dependency>
 
     </dependencies>
 

@@ -1,5 +1,7 @@
 package com.github.haliibobo.learn.offer;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Stack;
 
 /**
@@ -12,27 +14,22 @@ import java.util.Stack;
  */
 public class Queue {
     //["PSH1","PSH2","PSH3","POP","POP","PSH4","POP","PSH5","POP","POP"]
-    Stack<Integer> stack1 = new Stack<Integer>();
-    Stack<Integer> stack2 = new Stack<Integer>();
+    //private Deque<Integer> stack1 = new ArrayDeque<>();
+    private Deque<Integer> stack2 = new ArrayDeque<Integer>();
+    private Stack<Integer> stack1 = new Stack<>();
+    //private Stack<Integer> stack2 = new Stack<>();
 
     // 队尾
-    public void push1(int node) {
-        stack1.add(0,node);
-    }
-    //队首
-    public int pop1() {
-       return stack1.pop();
-    }
-
-    // 队尾
-    public void push2(int node) {
+    public void push(int node) {
         stack1.add(node);
     }
     //队首
-    public int pop2() {
+    public int pop() {
         if (stack2.isEmpty()){
             while (!stack1.isEmpty()){
-                stack2.push(stack1.pop());
+                //TODO 分析
+                //stack2.push(stack1.pop());
+                stack2.add(stack1.pop());
             }
         }
         return stack2.pop();

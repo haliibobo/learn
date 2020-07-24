@@ -1,5 +1,6 @@
 package com.github.haliibobo.learn.java.collection.map;
 
+import com.github.haliibobo.learn.java.lam.Student;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.MapUtils;
 
 /**
  * say something.
@@ -23,13 +25,25 @@ public class Test {
 
     @org.junit.Test
     public void test (){
-        Map<String,Integer> old = new HashMap<>();
+        Map<Long,Map<String,Object>> maps = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
+        map.put("1111",new Student(1,"1"));
+        maps.put(1111L,map);
+
+        Map<String, Object> newMap = (Map<String, Object>) MapUtils.getMap(maps, 1111L);
+
+        Student stu =  (Student )MapUtils.getMap(newMap, "1111");
+        System.out.println(stu);
+
+        System.out.println(newMap.get("1111"));
+
+        /*Map<String,Integer> old = new HashMap<>();
         old.put("aaa",111);
         old.put("ccc",333);
         old.put("bbb",222);
         old.put("dddd",null);
         System.out.println(old.containsKey("dddd"));
-        System.out.println(old.containsKey("ffff"));
+        System.out.println(old.containsKey("ffff"));*/
        /* System.out.println(old);
         List<Entry<String,Integer>> new1 = old.entrySet().stream().sorted(Comparator.comparingInt(Entry::getValue))
             .collect(Collectors.toList());
