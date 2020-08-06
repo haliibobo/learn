@@ -1,5 +1,6 @@
 package com.github.haliibobo.learn.java.thread;
 
+import java.util.HashMap;
 import java.util.concurrent.*;
 
 public class FutureTest {
@@ -36,6 +37,7 @@ public class FutureTest {
     }*/
 
     public static void main(String[] args) throws Exception {
+        HashMap m = new HashMap();
         CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> 10);
         CompletableFuture<String> f = future.thenCombine(CompletableFuture.supplyAsync(() -> 20),(x, y) -> "计算结果："+(x.equals(y)));
         System.out.println(f.get());

@@ -1,8 +1,10 @@
 package com.github.haliibobo.learn.java.bean;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * say something.
@@ -16,6 +18,10 @@ public class TestBean {
 
     private Map<FeedBackType, List<Fb>> feedbackMap;
     private StringBuffer s;
+
+    ThreadLocal<Integer> threadLocal;
+    ReentrantLock reentrantLock = new ReentrantLock();
+    //HashSet
 
     public TestBean(){
         this.feedbackMap = new HashMap<>();

@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * say something.
@@ -20,64 +21,57 @@ import java.util.concurrent.TimeUnit;
  */
 public class ShellUtil {
 
-    public static String linuxShellexec(final String[] args) {
+
+
+    private final static String[] TEST = {"/bin/sh","-c","cat ~/config/ip_local_port_range | awk '{print$1}'"};
+
+    public static boolean needSocket( int port) {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<String> future= executor.submit(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                InputStream is =null;
-                InputStreamReader ir = null;
-                BufferedReader br =null;
-                String result;
-                ProcessBuilder pb = new ProcessBuilder(args);
-                pb.redirectErrorStream(true);
-                try {
-                    Process p = pb.start();
-                    p.waitFor();
-                    is =p.getInputStream();
-                    ir = new InputStreamReader(is);
-                    br = new BufferedReader(ir);
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line).append("\n");
-                    }
-                    result = sb.toString();
+        Future<Boolean> future= executor.submit(() -> {
+            InputStream is =null;
+            InputStreamReader ir = null;
+            BufferedReader br =null;
+            ProcessBuilder pb = new ProcessBuilder(TEST);
+            pb.redirectErrorStream(true);
+            try {
+               Process p =Runtime.getRuntime().exec(TEST);
+                //Process p = pb.start();
+                p.waitFor();
+                is =p.getInputStream();
+                ir = new InputStreamReader(is);
+                br = new BufferedReader(ir);
+                String line =br.readLine();
+                if (NumberUtils.isDigits(line)) {
+                    System.out.println("random port start at " + line);
+                    return port >= Integer.parseInt(line);
                 }
-                catch (Exception e) {
-                    e.printStackTrace();
-                    result="linux exc fail";
-                }finally {
-                    try {
-                        if (null != br) {
-                            br.close();
-                        }
-                        if (null != ir) {
-                            ir.close();
-                        }
-                        if (null != is) {
-                            is.close();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        result="linux exc fail";
-                    }
-                }
-                if(result.contains("success")){
-                    String s = result.substring(0,result.length()-1);
-                    String diffPath =s.substring(s.lastIndexOf("\n"));
-                    diffPath =diffPath.replaceAll("\n","");
-                    return diffPath;
-                }
-                return result;
             }
+            catch (Exception e) {
+                e.printStackTrace();
+                return true;
+            }finally {
+                try {
+                    if (null != br) {
+                        br.close();
+                    }
+                    if (null != ir) {
+                        ir.close();
+                    }
+                    if (null != is) {
+                        is.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return true;
         });
         try {
-            return future.get(10, TimeUnit.HOURS);
+            return future.get(10, TimeUnit.SECONDS);
         } catch (Exception e) {
             e.printStackTrace();
-            return "linux exc timeout";
+            return true;
         } finally {
             future.cancel(true);
             executor.shutdown();
@@ -85,15 +79,10 @@ public class ShellUtil {
     }
 
     public static void main(String[] args) {
-        for (int i = 0; i <1 ; i++) {
-            String[] shellPath ={"/Users/lizibo/IdeaProjects/feeder-mr/src/main/assembly/bin/run-FeedMr-diff.sh",
-                "/user/recsys/recpro/unifiedfeed/itemprofile/akhal_mark_sku/201905270622",
-                "/user/recsys/recpro/unifiedfeed/itemprofile/akhal_mark_sku/201905280622",
-                "/user/recsys/recpro/unifiedfeed/itemprofile/akhal_mark_sku/diff",
-                "SOH","hdfs://ns1007"};
-            String result = linuxShellexec(shellPath);
-            System.out.println(result);
-        }
+
+        boolean result = needSocket(99);
+        System.out.println(result);
+
 
     }
 
