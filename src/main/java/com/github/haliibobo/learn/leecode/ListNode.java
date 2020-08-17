@@ -47,4 +47,7 @@ public class ListNode {
         ListNode.generateListNode(109);
        System.out.println(new ListNode(109));
     }
+
+
+
 }
