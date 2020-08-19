@@ -1,6 +1,8 @@
 package com.github.haliibobo.learn.java.lock;
 
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import org.junit.Test;
@@ -63,16 +65,68 @@ public class LockTest {
     /**
      * aqs use state to hold th num
      */
+    @Test
     public void testCDL() throws InterruptedException {
+        /**
+         * new Sync(count)
+         * setState(count);
+         */
+        CountDownLatch countDownLatch = new CountDownLatch(2);
+        /**
+         *Sync.tryReleaseShared(1)
+         * Decrement count; signal when transition to zero
+         * 如果 state == 0   doReleaseShared()
+         */
+        new Thread(countDownLatch::countDown).start();
+        new Thread(countDownLatch::countDown).start();
+        countDownLatch.await();
+    }
+
+
+    @Test
+    public void testCyclicBarrier() throws InterruptedException {
+        /**
+         * new Sync(count)
+         * setState(count);
+         */
+        CyclicBarrier cyclicBarrier = new CyclicBarrier(2);
+        /**
+         *Sync.tryReleaseShared(1)
+         * Decrement count; signal when transition to zero
+         * 如果 state == 0   doReleaseShared()
+         */
+        new Thread(() -> {
+            try {
+                cyclicBarrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
+        }).start();
+        new Thread(() -> {
+            try {
+                cyclicBarrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
+        }).start();
+        cyclicBarrier.wait();
+    }
+
+    @Test
+    public void testSemaphore() throws InterruptedException {
         /**
          * new Sync(count)
          * setState(count);
          */
         CountDownLatch countDownLatch = new CountDownLatch(1);
         /**
-         *
+         *Sync.tryReleaseShared(1)
+         * Decrement count; signal when transition to zero
+         * 如果 state == 0   doReleaseShared()
          */
-        countDownLatch.countDown();
+        new Thread(countDownLatch::countDown).start();
         countDownLatch.await();
     }
+
+
 }
