@@ -29,7 +29,7 @@ public class LockTest {
      * 公平锁 在 tryAcquire 时 首先判断没有前驱者，才会使用cas
      * tryLock() 使用非公平锁
      */
-    public void test() throws InterruptedException {
+    public void testLock() throws InterruptedException {
 
         ReentrantLock lock = new ReentrantLock();
         /**
@@ -58,7 +58,21 @@ public class LockTest {
         lock.tryLock(1000, TimeUnit.MICROSECONDS);
         lock.unlock();
         lock.newCondition();
+    }
 
+    /**
+     * aqs use state to hold th num
+     */
+    public void testCDL() throws InterruptedException {
+        /**
+         * new Sync(count)
+         * setState(count);
+         */
         CountDownLatch countDownLatch = new CountDownLatch(1);
+        /**
+         *
+         */
+        countDownLatch.countDown();
+        countDownLatch.await();
     }
 }

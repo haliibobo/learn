@@ -1,5 +1,7 @@
 package com.github.haliibobo.learn.file;
 
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,16 +21,11 @@ public class FileLearn {
 
     @Test
     public void test() throws IOException {
+        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("learn.conf");
+        Config config = ConfigFactory.parseReader(new InputStreamReader(in)).resolve();
         InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(
             "learn.conf");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-
-        StringBuilder sb  = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            sb.append(line);
-        }
-        System.out.println(sb);
+        Config learn = ConfigFactory.load("learn.conf");
     }
 
 }

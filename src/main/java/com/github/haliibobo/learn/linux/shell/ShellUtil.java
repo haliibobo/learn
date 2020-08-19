@@ -23,7 +23,7 @@ public class ShellUtil {
 
 
 
-    private final static String[] TEST = {"/bin/sh","-c","cat ~/config/ip_local_port_range | awk '{print$1}'"};
+    private final static String[] PORT_RANGE = {"/bin/sh","-c","cat /proc/sys/net/ipv4/ip_local_port_range | awk '{print$1}'"};
 
     public static boolean needSocket( int port) {
 
@@ -32,11 +32,8 @@ public class ShellUtil {
             InputStream is =null;
             InputStreamReader ir = null;
             BufferedReader br =null;
-            ProcessBuilder pb = new ProcessBuilder(TEST);
-            pb.redirectErrorStream(true);
             try {
-               Process p =Runtime.getRuntime().exec(TEST);
-                //Process p = pb.start();
+                Process p =Runtime.getRuntime().exec(PORT_RANGE);
                 p.waitFor();
                 is =p.getInputStream();
                 ir = new InputStreamReader(is);
