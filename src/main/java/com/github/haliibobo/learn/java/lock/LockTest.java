@@ -1,5 +1,6 @@
 package com.github.haliibobo.learn.java.lock;
 
+import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
@@ -89,7 +90,9 @@ public class LockTest {
          * new Sync(count)
          * setState(count);
          */
-        CyclicBarrier cyclicBarrier = new CyclicBarrier(2);
+        CyclicBarrier cyclicBarrier = new CyclicBarrier(2,()->{
+            System.out.println( Thread.currentThread().getName() + " every is done!");
+        });
         /**
          *Sync.tryReleaseShared(1)
          * Decrement count; signal when transition to zero
@@ -97,19 +100,33 @@ public class LockTest {
          */
         new Thread(() -> {
             try {
+                int readyTime = new Random().nextInt(100);
+                Thread.sleep(readyTime);
+                System.out.println(Thread.currentThread().getName() + " is ready cost " + readyTime);
                 cyclicBarrier.await();
+                int runTime = new Random().nextInt(50);
+                Thread.sleep(runTime);
+                System.out.println(Thread.currentThread().getName() + " is run cost " + runTime);
             } catch (InterruptedException | BrokenBarrierException e) {
                 e.printStackTrace();
             }
         }).start();
         new Thread(() -> {
             try {
+                int readyTime = new Random().nextInt(100);
+                Thread.sleep(readyTime);
+                System.out.println(Thread.currentThread().getName() + " is ready cost " + readyTime);
                 cyclicBarrier.await();
+                int runTime = new Random().nextInt(50);
+                Thread.sleep(runTime);
+                System.out.println(Thread.currentThread().getName() + " is run cost " + runTime);
             } catch (InterruptedException | BrokenBarrierException e) {
                 e.printStackTrace();
             }
         }).start();
-        cyclicBarrier.wait();
+        while (Thread.activeCount()>2){
+            Thread.yield();
+        }
     }
 
     @Test
