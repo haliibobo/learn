@@ -2,9 +2,13 @@ package com.github.haliibobo.learn.java.thread;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 /**
  * say something.
@@ -18,20 +22,20 @@ public class ScheduleExcutorServiceTest {
 
     public static void main(String[] args) {
 
-        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(2);
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
         MyScheduleThread myScheduleThread = new MyScheduleThread("MyScheduleThread");
         MyScheduleThread myScheduleThread2 = new MyScheduleThread("MyScheduleThread2");
         System.out.println("线程：" + Thread.currentThread().getName() + "，执行时间：" + myScheduleThread.paraseDate());
         //scheduledExecutorService.schedule(myScheduleThread, 10, TimeUnit.SECONDS);
-        //scheduledExecutorService.scheduleAtFixedRate(myScheduleThread,  10, 2, TimeUnit.SECONDS);
+        scheduledExecutorService.scheduleAtFixedRate(myScheduleThread,  1, 1, TimeUnit.SECONDS);
         //scheduledExecutorService.scheduleAtFixedRate(myScheduleThread, 10, 6, TimeUnit.SECONDS);
         //scheduledExecutorService.scheduleWithFixedDelay(myScheduleThread,10, 2, TimeUnit.SECONDS);
         //scheduledExecutorService.scheduleWithFixedDelay(myScheduleThread, 2, 1, TimeUnit.SECONDS);
         //scheduledExecutorService.scheduleAtFixedRate(myScheduleThread2,  2, 2, TimeUnit.SECONDS);
 
-        scheduledExecutorService.schedule(myScheduleThread, 10, TimeUnit.SECONDS);
+        /*scheduledExecutorService.schedule(myScheduleThread, 10, TimeUnit.SECONDS);
         scheduledExecutorService.schedule(myScheduleThread, 6, TimeUnit.SECONDS);
-        scheduledExecutorService.schedule(myScheduleThread, 1, TimeUnit.SECONDS);
+        scheduledExecutorService.schedule(myScheduleThread, 1, TimeUnit.SECONDS);*/
     }
 
     static class MyScheduleThread extends Thread {
@@ -45,7 +49,7 @@ public class ScheduleExcutorServiceTest {
         @Override
         public void run() {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(new Random().nextInt(3)*1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

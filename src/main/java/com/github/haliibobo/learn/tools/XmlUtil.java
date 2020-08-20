@@ -42,8 +42,7 @@ public class XmlUtil {
 	
 	/**
 	 * 解析file xml文档
-	 * 
-	 * @param String
+	 *
 	 * @return Document
 	 * @throws DocumentException
 	 * @throws FileNotFoundException
@@ -96,7 +95,6 @@ public class XmlUtil {
         }  
 		return map;
 	}
-	@SuppressWarnings({ "unchecked" })
 	public static List<Element> listSubElement(Element node){
 		 List<Element> list = new ArrayList<Element>();
 		 //当前节点下面的所有一级子节点    
@@ -199,9 +197,6 @@ public class XmlUtil {
 		return DocumentHelper.parseText(text);
 	}
 
-	/**
-	 * @param args
-	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static  Map<String,Object>  xml2Map(String str) {
 		Document doc= null;
@@ -283,55 +278,7 @@ public class XmlUtil {
 	        	return new ArrayList<Map>();
 	        }  
 	          
-	    } 
-
-	 	@SuppressWarnings("rawtypes")
-		public static String list2Xml4Version(List<Map<String,Object>> list,String encoding,Map<String,String> map) throws IOException {  
-	 	    Document document = DocumentHelper.createDocument();  
-	 	    Element unitVersions = document.addElement("unitVersions");
-	 	    unitVersions.addAttribute("unitId",map.get("unitId"));
-	 	    unitVersions.addAttribute("coreId",map.get("coreId"));
-	 	    unitVersions.addAttribute("versionNo",map.get("versionNo"));
-	 	    unitVersions.addAttribute("generateTime",DvBspUtil.getInstance().getCurrentDateTime());
-	 	       
-	 	        for (Map<String,Object> m : list) {  
-	 	            Element unitVersion = unitVersions.addElement("unitVersion");
-	 	            unitVersion.addAttribute("dataResourceName", String.valueOf(m.get("dataResourceName")));
-	 	            unitVersion.addAttribute("primaryKey", String.valueOf(m.get("primaryKey")));
-	 	            unitVersion.addAttribute("dataResourceId", String.valueOf(m.get("dataResourceId")));
-	 	            unitVersion.addAttribute("tableOrder", String.valueOf(m.get("tableOrder")));
-	 	            if(!CommonUtil.isNull(String.valueOf(m.get("jsonContent")))){
-
-	 	 	           
-		 	               for (Object o :  content.keySet()) {   
-		 	                    Element keyElement = unitVersion.addElement(String.valueOf(o));   
-		 	                    keyElement.setText(String.valueOf( content.get(o)));  
-		 	        }   	
-	 	            }
-	 	               
-	 	    }
-	 	       return doc2Str(document, encoding);  
 	    }
-	 	
-	    @SuppressWarnings("rawtypes")
-		public static List xml2List4Version(String xml) {  
-	        try {  
-	            List<Map> list = new ArrayList<Map>();  
-	            Document document = DocumentHelper.parseText(xml);  
-	            Element nodesElement = document.getRootElement();  
-	            List nodes = nodesElement.elements();  
-	            for (Iterator its = nodes.iterator(); its.hasNext();) {  
-	                Element nodeElement = (Element) its.next();  
-	                Map map = xml2Map4Version(nodeElement.asXML());  
-	                list.add(map);   
-	            }  
-	            return list;  
-	        } catch (Exception e) { 
-	        	log.error("xml2List error"+e);
-	        	return new ArrayList<Map>();
-	        }  
-	          
-	    } 
 
 }
 

@@ -1,5 +1,8 @@
 package com.github.haliibobo.learn.offer;
 
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class MergeList {
 
     /*
@@ -19,6 +22,9 @@ public class MergeList {
     }
 
     public static void main(String[] args) {
+
+        Integer a = 5;
+        a=8;
         ListNode head1 = new ListNode(1);
         ListNode listNode1 = new ListNode(3);
         head1.next = listNode1;

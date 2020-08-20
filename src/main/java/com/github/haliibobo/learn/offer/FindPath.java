@@ -30,11 +30,11 @@ public class FindPath {
      */
 
     public static void main(String[] args){
-        TreeNode<Integer> root= new TreeNode<>(10);
-        TreeNode<Integer> node2 = new TreeNode<>(5);
-        TreeNode<Integer> node3 = new TreeNode<>(12);
-        TreeNode<Integer> node4 = new TreeNode<>(4);
-        TreeNode<Integer> node5 = new TreeNode<>(7);
+        TreeNode root= new TreeNode(10);
+        TreeNode node2 = new TreeNode(5);
+        TreeNode node3 = new TreeNode(12);
+        TreeNode node4 = new TreeNode(4);
+        TreeNode node5 = new TreeNode(7);
         root.left = node2;
         root.right = node3;
         node2.left = node4;
@@ -54,24 +54,24 @@ public class FindPath {
     }
 
     private static void FindAPath(List<List<Integer>> result, List<Integer>
-        list, TreeNode<Integer> root, int target)  {
+        list, TreeNode root, int target)  {
 
-        list.add(root.value);
+        list.add(root.val);
 
         if (root.left == null && root.right == null) {
-            if(root.value == target){
+            if(root.val == target){
                 result.add(list);
             }
             return;
         }
         List<Integer> tmpList = new ArrayList<>(list);
         if(root.left !=null){
-            FindAPath(result, list, root.left, target - root.value);
+            FindAPath(result, list, root.left, target - root.val);
         }
 
         if(root.right !=null){
 
-            FindAPath(result, tmpList, root.right, target - root.value);
+            FindAPath(result, tmpList, root.right, target - root.val);
         }
     }
 

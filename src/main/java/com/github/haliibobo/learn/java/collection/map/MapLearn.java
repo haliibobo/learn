@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+
 import org.junit.Test;
 
 /**
@@ -45,6 +47,7 @@ public class MapLearn {
         System.out.println(System.getProperty("java.vm.name"));
         System.out.println(System.getProperty("java.vm.info"));
         System.out.println(Runtime.getRuntime().availableProcessors());
+        ConcurrentHashMap a = new ConcurrentHashMap();
     }
 
     @Test

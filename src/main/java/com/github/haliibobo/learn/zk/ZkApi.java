@@ -155,6 +155,7 @@ public class ZkApi {
         },new Stat()));
         m.put("v",value);
         System.out.println(m);
+        //zooKeeper.removeWatches();
         zooKeeper.setData(path,"hello zk async changed".getBytes(StandardCharsets.UTF_8),-1);
         System.out.println(m);
         latch.await();

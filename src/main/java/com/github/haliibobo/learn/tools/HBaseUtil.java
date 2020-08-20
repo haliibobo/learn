@@ -98,8 +98,7 @@ public class HBaseUtil {
 
 	/**
 	 * 插入数据
-	 * 
-	 * @param tableName
+	 *
 	 *@param rowKey
 	 *@param map
 	 */
@@ -111,7 +110,7 @@ public class HBaseUtil {
 			Put put = new Put(Bytes.toBytes(rowKey));
 
 			for (Map.Entry<String, String> entry : map.entrySet()) {
-				put.add(Bytes.toBytes(DEFAULT_CF), Bytes.toBytes(entry.getKey()), Bytes.toBytes(entry.getValue()));
+				put.addColumn(Bytes.toBytes(DEFAULT_CF), Bytes.toBytes(entry.getKey()), Bytes.toBytes(entry.getValue()));
 			}
 			table.put(put);
 		} catch (IOException e) {
@@ -137,8 +136,8 @@ public class HBaseUtil {
     	Table table;
 		try {
 			table = connection.getTable(TableName.valueOf(tName));
-			 Put put = new Put(Bytes.toBytes(rowKey));  
-		     put.add(Bytes.toBytes(DEFAULT_CF), Bytes.toBytes(columnName),   Bytes.toBytes(value));  
+			 Put put = new Put(Bytes.toBytes(rowKey));
+		     put.addColumn(Bytes.toBytes(DEFAULT_CF), Bytes.toBytes(columnName),   Bytes.toBytes(value));
 		     table.put(put);
 		} catch (IOException e) {
 			log.error("updateTable() tableName:" + tName + "updateTable error:" + e);
@@ -165,7 +164,7 @@ public class HBaseUtil {
 		Result result = table.get(get);
 
 		Cell ce = result.getColumnLatestCell(Bytes.toBytes(DEFAULT_CF), Bytes.toBytes(columnName));
-		return ce==null?"":Bytes.toString(ce.getValue());
+		return ce==null?"":Bytes.toString(ce.getValueArray());
 		}catch(IOException e){
 			log.error("getRecordByColumn () tableName:" + tName  +" rowKey: "+rowKey+"   getRecordByColumn error:" + e);
 			return "";
@@ -211,7 +210,7 @@ public class HBaseUtil {
 			get.addColumn(Bytes.toBytes(DEFAULT_CF), Bytes.toBytes(columnNames[i]));	
 		}
 		Result result = table.get(get);
-	    List<KeyValue> list = result.list();
+	    List<Cell> list = result.listCells();
 	    if(list==null){
 	    	return l;	
 	    }
@@ -222,8 +221,8 @@ public class HBaseUtil {
 	    	l.add(new HashMap<String,String>());
 	    }
 	     for( int j=0;j<list.size();j++){
-	    	 KeyValue kv=list.get(j);
-	    	 l.get(j%version).put(Bytes.toString(kv.getQualifier()), Bytes.toString(kv.getValue()));      
+	    	 Cell kv=list.get(j);
+	    	 l.get(j%version).put(Bytes.toString(kv.getQualifierArray()), Bytes.toString(kv.getValueArray()));
 	     }
 		return l;
 		}catch(IOException e){
@@ -233,11 +232,7 @@ public class HBaseUtil {
 		
 	}
 	   /** 
-     * File对象上传到hdfs 
-     * @param conf 
-     * @param uri 
-     * @param remote 
-     * @param local 
+     * File对象上传到hdfs
      * @throws IOException 
 	 * @throws InterruptedException 
      */  
@@ -269,13 +264,7 @@ public class HBaseUtil {
     
     
     /** 
-     * fileItem对象上传到hdfs 
-     * @param conf 
-     * @param uri 
-     * @param remote 
-     * @param local 
-     * @throws IOException 
-	 * @throws InterruptedException 
+     * fileItem对象上传到hdfs
      */  
     public boolean uploadFile(FileItem fileItem,String dstPath){  
  

@@ -1,12 +1,12 @@
 package com.github.haliibobo.learn.java.tree;
 
-public class TreeNode<T> {
-    public TreeNode<T> left;
-    public TreeNode<T> right;
-    public T value;
+public class TreeNode {
+    public TreeNode left;
+    public TreeNode right;
+    public int  val;
 
-    public TreeNode (T value) {
-        this.value = value;
+    public TreeNode (int  val) {
+        this.val = val;
     }
 
 }

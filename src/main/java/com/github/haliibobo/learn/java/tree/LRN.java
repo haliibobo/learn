@@ -1,6 +1,6 @@
 package com.github.haliibobo.learn.java.tree;
 
-import java.util.Stack;
+import java.util.*;
 
 public class LRN {
     /**
@@ -16,26 +16,24 @@ public class LRN {
      * @param args
      */
     public static void main(String[] args) {
-
-        TreeNode<Integer> node1 = new TreeNode<>(1);
-        TreeNode<Integer> node2 = new TreeNode<>(2);
-        TreeNode<Integer> node3 = new TreeNode<>(3);
-        TreeNode<Integer> node4 = new TreeNode<>(4);
-        TreeNode<Integer> node5 = new TreeNode<>(5);
-        TreeNode<Integer> node6 = new TreeNode<>(6);
-        TreeNode<Integer> node7 = new TreeNode<>(7);
-        TreeNode<Integer> node8 = new TreeNode<>(8);
-
-        node1.left = node2;
-        node1.right = node3;
-        node2.left = node4;
-        node3.right = node5;
-        node4.right = node6;
-        node6.left = node7;
-        node6.right = node8;
+        TreeNode node1 = new TreeNode(1);
+        TreeNode node2 = new TreeNode(2);
+        TreeNode node3 = new TreeNode(3);
+        TreeNode node4 = new TreeNode(4);
+        TreeNode node5 = new TreeNode(5);
+        TreeNode node6 = new TreeNode(6);
+        TreeNode node7 = new TreeNode(7);
+        TreeNode node8 = new TreeNode(8);
+        node1.right=node3;
+        node1.left=node2;
+        node2.left=node4;
+        node3.right=node5;
+        node4.right=node6;
+        node6.left=node7;
+        node6.right=node8;
         traversalRecursion(node1);
         System.out.println();
-        traversal(node1);
+        nonTraversalRecursion(node1);
     }
 
     /**
@@ -44,9 +42,9 @@ public class LRN {
      */
     public static void traversalRecursion(TreeNode root) {
         if (root != null){
-            System.out.print(root.value + " ");
             traversalRecursion(root.left);
             traversalRecursion(root.right);
+            System.out.print(root.val + " ");
         }
     }
 
@@ -54,19 +52,28 @@ public class LRN {
      * 非递归
      * @param root
      */
-    public static void traversal(TreeNode<Integer> root) {
-        Stack<TreeNode<Integer>>  stack = new Stack<>();
-        TreeNode<Integer> curNode = root;
-        while (curNode != null || !stack.empty()){
-            if (curNode != null) {
-                System.out.print(curNode.value + " ");
-                if (curNode.right != null) {
-                    stack.push(curNode.right);
+    public static void nonTraversalRecursion(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        Deque<Integer> deque  = new ArrayDeque<>();
+        Deque<TreeNode> treeNodes = new ArrayDeque<>();
+        treeNodes.push(root);
+        while (!treeNodes.isEmpty()){
+            int size = treeNodes.size();
+            for (int i = 0; i <size ; i++) {
+                TreeNode node = treeNodes.pop();
+                deque.push(node.val);
+                if (node.left != null) {
+                    treeNodes.push(node.left);
                 }
-                curNode = curNode.left;
-            } else if (!stack.empty()) {
-                curNode = stack.pop();
+                if (node.right != null) {
+                    treeNodes.push(node.right);
+                }
+
             }
         }
+        System.out.print(Arrays.toString(deque.toArray()));
+
     }
 }

@@ -3,6 +3,7 @@ package com.github.haliibobo.learn.redis;
 import com.google.gson.Gson;
 import java.lang.management.ManagementFactory;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +20,7 @@ import redis.clients.jedis.Jedis;
  */
 public class Test {
 
-    private static final Charset CHARSET = Charset.forName("UTF-8");
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
     private static Gson gson = new Gson();
 
     public static Map<byte[],byte[]> last;

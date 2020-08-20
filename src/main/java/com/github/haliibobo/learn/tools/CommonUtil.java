@@ -1,13 +1,9 @@
 package com.github.haliibobo.learn.tools;
 
-import com.alibaba.fastjson.JSONObject;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -263,54 +259,6 @@ public class CommonUtil {
 		long end = stringToDate(timeEnd).getTime();
 
 		return (end - start) / (1000 * 60 * 60 * 24);
-	}
-
-
-	public static String jsonTransfer(String jsonContent, String dataSourceId,boolean isDecode) {
-		DataResUtil daResUtil = DataResUtil.getInstance();
-		String primaryKey = "";
-		String primaryKeyValue = "";
-		if (isDecode) {
-			jsonContent = Base64Util.decode(jsonContent);
-		}
-		StringBuffer newJsonContent = new StringBuffer();
-		newJsonContent.append("{");
-		List<Map<String, String>> list = daResUtil.getDataItemsByResourceId(dataSourceId);
-		JSONObject jsonObject = new JSONObject();
-		Iterator<?> iterator = jsonObject.keySet().iterator();
-		String key = "";
-		String value = "";
-		String colNameEn = "";
-		String colNameCn = "";
-		String isPrimaryKey = "";
-		while (iterator.hasNext()) {
-			key = (String) iterator.next();
-			value = (String) jsonObject.get(key);
-			if(value.indexOf("\r")>-1||value.indexOf("\t")>-1||value.indexOf("\n")>-1){
-				value=replaceSpecal(value);
-			}
-			for (int i = 0; i < list.size(); i++) {
-				colNameEn = list.get(i).get("colNameEn");
-				colNameCn = list.get(i).get("colNameCn");
-				isPrimaryKey = list.get(i).get("isPrimary");
-				// String societyPublicProperty = list.get(i).get(
-				// "societyPublicProperty");//
-				// 控制是否显示,如果是AUTHORITY_QUERY，则不显示
-				// 重新组装json
-				if (key.equals(colNameEn)) {
-					newJsonContent.append("\"").append(colNameCn)
-							.append("\":\"").append(value)
-							.append("\",");
-					if ("1".equals(isPrimaryKey)) {
-						primaryKey = colNameEn;
-						primaryKeyValue = value;
-					}
-				}
-			}
-
-		}
-		return newJsonContent.substring(0, newJsonContent.length() - 1) + "};"+ primaryKey + ";" + primaryKeyValue;
-
 	}
 
 	public static String replaceSpecal(String str) {

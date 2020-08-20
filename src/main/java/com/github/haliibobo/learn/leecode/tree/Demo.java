@@ -20,15 +20,15 @@ public class Demo {
   //[6,2,8,0,4,7,9,null,null,2,6]
     @Test
         public void test (){
-        TreeNode<Integer> n1 = new TreeNode<>(6);
-        TreeNode<Integer> n2 = new TreeNode<>(2);
-        TreeNode<Integer> n3 = new TreeNode<>(8);
-        TreeNode<Integer> n4 = new TreeNode<>(0);
-        TreeNode<Integer> n5 = new TreeNode<>(4);
-        TreeNode<Integer> n6 = new TreeNode<>(7);
-        TreeNode<Integer> n7 = new TreeNode<>(9);
-        TreeNode<Integer> n8 = new TreeNode<>(2);
-        TreeNode<Integer> n9 = new TreeNode<>(6);
+        TreeNode n1 = new TreeNode(6);
+        TreeNode n2 = new TreeNode(2);
+        TreeNode n3 = new TreeNode(8);
+        TreeNode n4 = new TreeNode(0);
+        TreeNode n5 = new TreeNode(4);
+        TreeNode n6 = new TreeNode(7);
+        TreeNode n7 = new TreeNode(9);
+        TreeNode n8 = new TreeNode(2);
+        TreeNode n9 = new TreeNode(6);
         n1.left =n2;
         n1.right=n3;
         n2.left = n4;
@@ -44,11 +44,11 @@ public class Demo {
 
     int max =0;
     int currCount =0;
-    TreeNode<Integer> pre =null;
+    TreeNode pre =null;
     int retCount =0;
     int[] ret;
 
-    public int[] findMode(TreeNode<Integer> root) {
+    public int[] findMode(TreeNode root) {
         if (root == null){
             return new int[0];
         }
@@ -63,14 +63,14 @@ public class Demo {
 
     }
 
-    public void cal (TreeNode<Integer> root){
+    public void cal (TreeNode root){
         if (root == null){
             return;
         }
 
         cal(root.left);
 
-        if (pre !=null && pre.value == root.value){
+        if (pre !=null && pre.val == root.val){
             currCount ++;
         }else{
             currCount =1;
@@ -81,7 +81,7 @@ public class Demo {
             retCount =1;
         } else if (currCount == max){
             if (ret != null)
-                ret[retCount] = root.value;
+                ret[retCount] = root.val;
             retCount++;
         }
 
