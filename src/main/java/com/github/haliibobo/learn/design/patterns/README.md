@@ -1,0 +1,1 @@
+https://howtodoinjava.com/gang-of-four-java-design-patterns/

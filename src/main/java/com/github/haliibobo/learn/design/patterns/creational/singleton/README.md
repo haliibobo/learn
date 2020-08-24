@@ -1,0 +1,1 @@
+https://howtodoinjava.com/design-patterns/creational/singleton-design-pattern-in-java

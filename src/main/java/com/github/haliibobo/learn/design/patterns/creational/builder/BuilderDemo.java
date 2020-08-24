@@ -6,7 +6,7 @@ import javax.sql.DataSource;
 import org.junit.Test;
 
 /**
- * say something.
+ * https://howtodoinjava.com/design-patterns/creational/builder-pattern-in-java/.
  *
  * @author lizibo
  * @version 1.0
