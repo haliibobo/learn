@@ -3,31 +3,21 @@
  */
 package com.github.haliibobo.learn.tools;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.dom4j.Attribute;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
+import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
+
+import java.io.*;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 
 
@@ -39,17 +29,35 @@ import org.dom4j.io.XMLWriter;
  */
 public class XmlUtil {
 	private static final Log log = LogFactory.getLog(XmlUtil.class);
+
+	private static volatile XmlUtil xmlUtil;
+
+	private XmlUtil(){
+
+	}
+	public static XmlUtil getInstance(){
+		if (xmlUtil == null) {
+			synchronized (XmlUtil.class){
+				if (xmlUtil == null) {
+					xmlUtil = new XmlUtil();
+				}
+			}
+		}
+		return xmlUtil;
+	}
 	
 	/**
 	 * 解析file xml文档
 	 *
 	 * @return Document
 	 * @throws DocumentException
-	 * @throws FileNotFoundException
 	 */
-	public static Document parse(String xmlPath) throws FileNotFoundException, DocumentException  {
+	public Document parse(String xmlPath) throws DocumentException  {
 		SAXReader reader = new SAXReader();
-		FileInputStream file = new FileInputStream(xmlPath);
+		InputStream file = Thread.currentThread().getContextClassLoader().getResourceAsStream(xmlPath);
+		if (file == null) {
+			throw new NullPointerException();
+		}
 		BufferedInputStream buffer = new BufferedInputStream(file);
 		return  reader.read(buffer);
 	}
@@ -61,7 +69,7 @@ public class XmlUtil {
     * @return Element    返回类型
     * @throws
     */
-	public static  Element getRootElement(Document doc){
+	public   Element getRootElement(Document doc){
     	return doc.getRootElement();
     	
     }
@@ -73,47 +81,22 @@ public class XmlUtil {
 	* @return Map    返回类型
 	* @throws
 	*/
-	@SuppressWarnings("unchecked")
-	public static  Map<String,Object> listAttribute(Element node) {
-		Map<String,Object> map = new HashMap<String,Object>();
-		List<Attribute> list = node.attributes();
-		for (Attribute attribute : list) {
-			map.put(attribute.getName(), attribute.getValue());
-		}
-		return map;
+	public   Map<String,String> listAttribute(Element node) {
+		return node.attributes()
+				.stream().collect(Collectors
+						.toMap(Attribute::getName,Attribute::getValue));
 
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static Map<String,Object>  listSubNode(Element node){
-		Map<String,Object>  map = new HashMap<String,Object> ();
-		 //当前节点下面的所有一级子节点    
-        Iterator<Element> iterator = node.elementIterator();  
-        while(iterator.hasNext()){  
-            Element e = iterator.next();
-            map.put(e.getName(), e.getText());
-        }  
-		return map;
+	public  Map<String,String>  listSubNode(Element node){
+		return this.listSubElement(node)
+				.stream().collect(Collectors
+						.toMap(Element::getName,Element::getText));
 	}
-	public static List<Element> listSubElement(Element node){
-		 List<Element> list = new ArrayList<Element>();
-		 //当前节点下面的所有一级子节点    
-        Iterator<Element> iterator = node.elementIterator();  
-        while(iterator.hasNext()){  
-            Element e = iterator.next();
-            list.add(e);
-        }  
-		return list;
+	public  List<Element> listSubElement(Element node){
+		return node.elements();
 	}
-	/**
-	 * 保存文档
-	 * 
-	 * @param doc
-	 * @param xmlPath
-	 * @param encoding
-	 * @throws IOException 
-	 * @throws Exception
-	 */
+
 	public void save(Document doc, String xmlPath, String encoding) throws IOException {
 		OutputFormat format = OutputFormat.createPrettyPrint();
 		format.setEncoding(encoding);
@@ -138,14 +121,13 @@ public class XmlUtil {
 	 *            输出文件路径及文件名 如果输出文件为null，则默认为原xml文件
 	 */
 	@SuppressWarnings("rawtypes")
-	public static void modifyDocument(File inputXml, String nodes, String attributename, String value, String outXml) {
+	public  void modifyDocument(File inputXml, String nodes, String attributename, String value, String outXml) {
 		try {
 			SAXReader saxReader = new SAXReader();
 			Document document = saxReader.read(inputXml);
-			List list = document.selectNodes(nodes);
-			Iterator iter = list.iterator();
-			while (iter.hasNext()) {
-				Attribute attribute = (Attribute) iter.next();
+			List<Node> list = document.selectNodes(nodes);
+			for (Node o : list) {
+				Attribute attribute = (Attribute) o;
 				if (attribute.getName().equals(attributename))
 					attribute.setValue(value);
 			}
@@ -159,9 +141,7 @@ public class XmlUtil {
 			output.close();
 		}
 
-		catch (DocumentException e) {
-			log.error(e);
-		} catch (IOException e) {
+		catch (DocumentException | IOException e) {
 			log.error(e);
 		}
 	}
@@ -175,7 +155,7 @@ public class XmlUtil {
 	 * @throws IOException 
 	 * @throws Exception
 	 */
-	public static String doc2Str(Document doc, String encoding) throws IOException {
+	public  String doc2Str(Document doc, String encoding) throws IOException {
 		OutputFormat format = OutputFormat.createPrettyPrint();
 		format.setEncoding(encoding);
 		ByteArrayOutputStream byteOS = new ByteArrayOutputStream();
@@ -193,43 +173,29 @@ public class XmlUtil {
 	 * @return
 	 * @throws DocumentException
 	 */
-	private static  Document str2Doc(String text) throws DocumentException {
+	private  Document str2Doc(String text) throws DocumentException {
 		return DocumentHelper.parseText(text);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static  Map<String,Object>  xml2Map(String str) {
-		Document doc= null;
-		Map data = new HashMap();
-		List<Map<String,Object> > list = new ArrayList<Map<String,Object> >();
+	@SuppressWarnings({ "rawtypes"})
+	public   Map<String,String>  xml2Map(String str) {
+		Map<String,String> data = new HashMap<>();
 		try {
-			 doc = str2Doc(str);
-				Element root =getRootElement(doc);
-				 data =listAttribute(root);
-				List<Element> l = listSubElement(root);
-				for(int i=0;i<l.size();i++){
-					Map<String,Object>  map = listSubNode(l.get(i));
-					list.add(map);
-				}
+			Element root =getRootElement(str2Doc(str));
+			data = new HashMap<>(listAttribute(root));
+			//List<Map<String,String>> list =listSubElement(root).stream().map(this::listSubNode).collect(Collectors.toList());
+			//if(!list.isEmpty())
+			//data.put("data", list);
 		} catch (DocumentException e) {
-			
-			
-			if(log.isErrorEnabled()){
-				log.error("xml2Map出错:"+e);
-				log.error("数据str:" + str);
-			}
+			e.printStackTrace();
 		}
-		
-
-		data.put("data", list);
         return data;
 	}
 
-	 public static String map2Xml(Map<String,Object> map,String encoding) throws IOException {  
+	 public  String map2Xml(Map<String,Object> map,String encoding) throws IOException {
 	        Document document = DocumentHelper.createDocument();  
 	        Element nodeElement = document.addElement("node");  
 	        for ( Entry<String, Object> entry : map.entrySet()) {
- 
 	            Element keyElement = nodeElement.addElement("key");  
 	            keyElement.addAttribute("label", entry.getKey());  
 	            keyElement.setText(String.valueOf(entry.getValue()));  
@@ -238,7 +204,7 @@ public class XmlUtil {
 	    }  
 	
 	    @SuppressWarnings("rawtypes")
-		public static String list2Xml(List list,String encoding) throws IOException {  
+		public  String list2Xml(List list,String encoding) throws IOException {
 	        Document document = DocumentHelper.createDocument();  
 	        Element nodesElement = document.addElement("nodes");  
 	        int i = 0;  
@@ -259,26 +225,93 @@ public class XmlUtil {
 	        }  
 	        return doc2Str(document, encoding);  
 	    }
+
+	public Element getRoot (String xml) throws DocumentException {
+		return DocumentHelper.parseText(xml)
+				.getRootElement();
+	}
+
+	public  List<Map<String,String>> xml2List(Element root) {
+		try {
+			return root.elements().stream()
+					.map(Element::asXML)
+					.map(this::xml2Map)
+					.collect(Collectors.toList());
+		} catch (Exception e) {
+			log.error("xml2List error"+e);
+			return new ArrayList<>();
+		}
+	}
 	    
 	    @SuppressWarnings("rawtypes")
-		public static List xml2List(String xml) {  
-	        try {  
-	            List<Map> list = new ArrayList<Map>();  
-	            Document document = DocumentHelper.parseText(xml);  
-	            Element nodesElement = document.getRootElement();  
-	            List nodes = nodesElement.elements();  
-	            for (Iterator its = nodes.iterator(); its.hasNext();) {  
-	                Element nodeElement = (Element) its.next();  
-	                Map map = xml2Map(nodeElement.asXML());  
-	                list.add(map);   
-	            }  
-	            return list;  
+		public  List<Map<String,String>> xml2List(String xml) {
+	        try {
+				return getRoot(xml)
+						.elements().stream()
+						.map(Element::asXML)
+						.map(this::xml2Map)
+						.collect(Collectors.toList());
 	        } catch (Exception e) { 
 	        	log.error("xml2List error"+e);
-	        	return new ArrayList<Map>();
-	        }  
-	          
+	        	return new ArrayList<>();
+	        }
 	    }
 
+	public  <T> T mapToBean(Map<String, String> map, Class<T> clazz) throws Exception {
+		T obj = clazz.newInstance();
+		if(map != null && map.size() > 0) {
+			for(Map.Entry<String, String> entry : map.entrySet()) {
+				String propertyName = entry.getKey();
+				Object value = entry.getValue();
+				String setMethodName = "set"
+						+ propertyName.substring(0, 1).toUpperCase()
+						+ propertyName.substring(1);
+				Field field = getClassField(clazz, propertyName);
+				assert field != null;
+				Class fieldTypeClass = field.getType();
+				value = convertValType(value, fieldTypeClass);
+				clazz.getMethod(setMethodName, field.getType()).invoke(obj, value);
+			}
+		}
+		return obj;
+	}
+
+	private  Object convertValType(Object value, Class fieldTypeClass) {
+		Object retVal = null;
+		if(Long.class.getName().equals(fieldTypeClass.getName())
+				|| long.class.getName().equals(fieldTypeClass.getName())) {
+			retVal = Long.parseLong(value.toString());
+		} else if(Integer.class.getName().equals(fieldTypeClass.getName())
+				|| int.class.getName().equals(fieldTypeClass.getName())) {
+			retVal = Integer.parseInt(value.toString());
+		} else if(Float.class.getName().equals(fieldTypeClass.getName())
+				|| float.class.getName().equals(fieldTypeClass.getName())) {
+			retVal = Float.parseFloat(value.toString());
+		} else if(Double.class.getName().equals(fieldTypeClass.getName())
+				|| double.class.getName().equals(fieldTypeClass.getName())) {
+			retVal = Double.parseDouble(value.toString());
+		} else {
+			retVal = value;
+		}
+		return retVal;
+	}
+
+	private  Field getClassField(Class clazz, String fieldName) {
+		if( Object.class.getName().equals(clazz.getName())) {
+			return null;
+		}
+		Field []declaredFields = clazz.getDeclaredFields();
+		for (Field field : declaredFields) {
+			if (field.getName().equals(fieldName)) {
+				return field;
+			}
+		}
+
+		Class superClass = clazz.getSuperclass();
+		if(superClass != null) {// 简单的递归一下
+			return getClassField(superClass, fieldName);
+		}
+		return null;
+	}
 }
 

@@ -355,9 +355,9 @@ public class HBaseUtil {
 	private URI getHdfsUrl(){
     	
     	try {
-    		Map<String, Object> map = XmlUtil.xml2Map(XmlUtil.doc2Str(XmlUtil.parse(CommonUtil.getWebInfPath("core-site.xml")), "UTF-8"));
-        	String url = String.valueOf(((Map )(((List) map.get("data")).get(0))).get("value"));
-			return new URI(url);
+    		Map<String, String> map = XmlUtil.getInstance().xml2Map(XmlUtil.getInstance().doc2Str(XmlUtil.getInstance().parse(CommonUtil.getWebInfPath("core-site.xml")), "UTF-8"));
+        	//String url = String.valueOf(((Map )(((List) map.get("data")).get(0))).get("value"));
+			return new URI("url");
 		} catch (Exception e) {
 			log.error( "getHdfsUrl error:" + e,e);
 			return null;

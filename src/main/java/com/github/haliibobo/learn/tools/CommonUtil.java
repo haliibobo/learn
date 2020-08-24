@@ -290,7 +290,7 @@ public class CommonUtil {
         path=path.substring(1); //去掉第一个\,如 \D:\JavaWeb...  
         path+="classes/"+fileName; 
 		String os = System.getProperty("os.name");
-		  if (os != null && os.toLowerCase().indexOf("linux") > -1) {
+		  if (os != null && os.toLowerCase().contains("linux")) {
 			  path="/" +path;
 	        }
         //System.out.println(path);  

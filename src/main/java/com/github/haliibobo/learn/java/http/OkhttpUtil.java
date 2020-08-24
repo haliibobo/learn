@@ -5,6 +5,7 @@ import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class OkhttpUtil {
     private OkHttpClient client;
@@ -12,7 +13,8 @@ public class OkhttpUtil {
     private static volatile  OkhttpUtil okhttpUtil;
 
     private OkhttpUtil (){
-        this.client = new OkHttpClient();
+        this.client = new OkHttpClient().newBuilder()
+                .connectionPool(new ConnectionPool()).build();
     }
 
      public static OkhttpUtil getInstance() {
@@ -26,26 +28,21 @@ public class OkhttpUtil {
         return okhttpUtil;
     }
 
-    public void test() {
-        Request request = new Request.Builder().url("https://github.com/vuejs/vue-cli")
+    public void getAsync(String url, Callback callback) {
+        Request request = new Request.Builder().url(url)
                 .get().build();
         Call call = client.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                System.out.println("Fail");
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-
-                System.out.println(response.body().string());
-
-            }
-        });
+        call.enqueue(callback);
     }
 
-    public void test2 () {
+    public Response getSync(String url ) throws IOException {
+        Request request = new Request.Builder().url(url)
+                .get().build();
+        Call call = client.newCall(request);
+        return  call.execute();
+    }
+
+    public void postAsync (String url ) {
          MediaType mediaType = MediaType.parse("application/json;charset=utf-8");
         JSONObject feedback = new JSONObject();
         feedback.put("rtm" ,System.currentTimeMillis()+"");
@@ -53,7 +50,6 @@ public class OkhttpUtil {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result",feedback.toString());
         RequestBody requestBody = RequestBody.create(mediaType,jsonObject.toJSONString());
-        String url = "http://rsm.jd.com/api/feedback/rec/recfeeder/clk@behavior@th";
         final Request request = new Request.Builder()
                 .url(url)
                 .post(requestBody)
