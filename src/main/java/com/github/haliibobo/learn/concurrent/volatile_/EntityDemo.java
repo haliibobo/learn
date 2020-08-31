@@ -1,0 +1,47 @@
+package com.github.haliibobo.learn.concurrent.volatile_;
+
+import java.util.concurrent.TimeUnit;
+
+/**
+ * say something.
+ *
+ * @author lizibo
+ * @version 1.0
+ * @date 2020-08-31 17:01
+ * @description describe what this class do
+ */
+public class EntityDemo {
+    //使用volatile修饰共享资源
+    private static Entity entity = Entity.getInstance();
+
+   // private static final CountDownLatch latch = new CountDownLatch();
+
+    public static void main(String args[]) throws InterruptedException {
+        //启动一个线程，当发现local_value与init_value不同时，则输出init_value被修改的值
+        new Thread(() -> {
+            int localValue = entity.getInitValue();
+            while (localValue < Entity.getMax()) {
+                if (entity.getInitValue() != localValue) {
+                    System.out.printf("The init_value is update ot [%d]\n", entity.getInitValue());
+                    //对localValue进行重新赋值
+                    localValue = entity.getInitValue();
+                }
+            }
+        }, "Reader").start();
+
+        //启动updater线程，主要用于对init_value的修改，当local_value=5的时候退出生命周期
+        new Thread(() -> {
+            int localValue = entity.getInitValue();
+            while (localValue < Entity.getMax()) {
+                //修改init_value
+                System.out.printf("The init_value will be changed to [%d]\n", ++localValue);
+                entity.setInitValue(localValue);
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, "Updater").start();
+    }
+}
