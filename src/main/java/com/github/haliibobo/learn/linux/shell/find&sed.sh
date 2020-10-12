@@ -13,9 +13,6 @@ sort a b b | uniq -u > c   # c 是 a - b
 
 
 sed -i 's/test/lf/g' spring-config-zk-lf.xml
-
-sed -i 's/55255206925/100014376346/g' jd_740ea83a8e21a_1
-sed -i 's/100003353269/100014376348/g' jd_740ea83a8e21a_1
-sed -i 's/3896327/100014376350/g' jd_740ea83a8e21a_1
-"isLbsStoreGoods":"1"
-grep  -rl 100014376350 ./*.data | xargs sed -i 's/100014376350/100014376158/g'
+多行匹配
+brew install pcre
+pcregrep -M  'abc = \[(\n).*\n.*\]' ./*/*.conf
