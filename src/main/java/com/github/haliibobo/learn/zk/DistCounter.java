@@ -29,7 +29,7 @@ public class DistCounter {
 
     @Before
     public void setUp() throws InterruptedException {
-        zkStr = "halibobo.cn:2181";
+        zkStr = "halibobo.cn:9527";
         path = "/halibobo/curator/dist_count";
         retryPolicy = new ExponentialBackoffRetry(1000,3);
         client = CuratorFrameworkFactory.builder().connectString(zkStr).sessionTimeoutMs(50000)

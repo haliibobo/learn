@@ -16,7 +16,7 @@ public class ThreadLocalLearn {
 
     @Test
     public void test(){
-        ThreadLocal threadLocal = new ThreadLocal();
+        ThreadLocal<Integer> threadLocal = new ThreadLocal<>();
         System.out.println(Thread.currentThread());
 
         Thread thread = new Thread(()->{

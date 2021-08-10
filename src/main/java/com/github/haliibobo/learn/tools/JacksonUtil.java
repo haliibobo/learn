@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -31,14 +32,14 @@ public class JacksonUtil {
     public static String write2JsonStr(Object o) throws JsonProcessingException {
             return mapper.writeValueAsString(o);
     }
-    public static <T> T json2Object(String json, Class<T> clz) throws JsonProcessingException {
+    public static <T> T json2Object(String json, Class<T> clz) throws IOException {
         return mapper.readValue(json,clz);
     }
-    public static <T> List<T> json2ObjectList(String json, Class<T> clazz) throws JsonProcessingException {
+    public static <T> List<T> json2ObjectList(String json, Class<T> clazz) throws IOException {
         JavaType t  = TYPE_FACTORY.constructParametricType(List.class, clazz);
         return mapper.readValue(json, t);
     }
-    public static Set<?> json2ArraySet(String json, TypeReference<?> tr) throws JsonProcessingException {
+    public static Set<?> json2ArraySet(String json, TypeReference<?> tr) throws IOException {
             return (Set<?>) mapper.readValue(json, tr);
 
     }

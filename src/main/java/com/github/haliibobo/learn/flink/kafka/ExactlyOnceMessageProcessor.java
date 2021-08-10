@@ -96,7 +96,7 @@ public class ExactlyOnceMessageProcessor extends Thread {
 
                     // Checkpoint the progress by sending offsets to group coordinator broker.
                     // Note that this API is only available for broker >= 2.5.
-                    //producer.sendOffsetsToTransaction(offsets, consumer.groupMetadata());
+                   // producer.sendOffsetsToTransaction(offsets, consumer.groupMetadata());
 
                     // Finish the transaction. All sent records should be visible for consumption now.
                     producer.commitTransaction();

@@ -24,18 +24,19 @@ import java.util.concurrent.TimeUnit;
  * @description describe what this class do
  */
 public class HttpServer {
+    ListeningServer server;
+    public HttpServer() throws Exception {
+    init();
+    }
 
-    private HttpServer() {
-
+    public static void main(String[] args) throws Exception {
+        HttpServer s = new HttpServer();
     }
 
     /**
      * Start the server.
      */
-    public static void main(String[] args) throws Exception {
-
-
-
+    public  void init() throws Exception {
         Config config = ConfigFactory.load("finagle.conf");
 
         int maxConcurrentRequests = config.getInt("server.concurrentSize");
@@ -58,11 +59,11 @@ public class HttpServer {
             .andThen(errorsFilter)
             .andThen(router());
 
-        ListeningServer server = Http.server()
-            .withCompressionLevel(2)
-            .withAdmissionControl().concurrencyLimit(maxConcurrentRequests, maxWaiters)
-            .withRequestTimeout(processTimeoutD)
-            .withSession().maxLifeTime(processTimeoutD)
+        server = Http.server()
+            //.withCompressionLevel(2)
+            //.withAdmissionControl().concurrencyLimit(maxConcurrentRequests, maxWaiters)
+            //.withRequestTimeout(processTimeoutD)
+            //.withSession().maxLifeTime(processTimeoutD)
             .serve(new InetSocketAddress(InetAddress.getLoopbackAddress(),port), service);
 
         Await.ready(server);

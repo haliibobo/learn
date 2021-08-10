@@ -1,5 +1,6 @@
 package com.github.haliibobo.learn.java.nio;
 
+import java.net.Socket;
 import java.nio.channels.FileChannel;
 
 /**
@@ -17,5 +18,5 @@ public class Test {
     public void test(){
         //FileChannel fileChannel = new FileChannel() {
         }
-
+        //Socket
     }

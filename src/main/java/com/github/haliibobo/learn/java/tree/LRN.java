@@ -70,10 +70,8 @@ public class LRN {
                 if (node.right != null) {
                     treeNodes.push(node.right);
                 }
-
             }
         }
         System.out.print(Arrays.toString(deque.toArray()));
-
     }
 }

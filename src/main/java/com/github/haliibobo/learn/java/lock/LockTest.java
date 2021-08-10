@@ -17,10 +17,6 @@ import org.junit.Test;
  * @description describe what this class do
  */
 public class LockTest {
-
-
-
-
     @Test
     /**
      * Uses AQS state(cas change state when state == 0) to
@@ -90,9 +86,7 @@ public class LockTest {
          * new Sync(count)
          * setState(count);
          */
-        CyclicBarrier cyclicBarrier = new CyclicBarrier(2,()->{
-            System.out.println( Thread.currentThread().getName() + " every is done!");
-        });
+        CyclicBarrier cyclicBarrier = new CyclicBarrier(2,()-> System.out.println( Thread.currentThread().getName() + " every is done!"));
         /**
          *Sync.tryReleaseShared(1)
          * Decrement count; signal when transition to zero

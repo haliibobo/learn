@@ -19,7 +19,7 @@ public class Vote {
 
     @Before
     public void setup(){
-        jedis = new Jedis("182.92.98.63");
+        jedis = new Jedis("halibobo.cn",9529);
         jedis.auth("19911205_Lzb");
         System.out.println("connected");
     }

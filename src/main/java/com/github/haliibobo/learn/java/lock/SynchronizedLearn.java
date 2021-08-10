@@ -1,5 +1,8 @@
 package com.github.haliibobo.learn.java.lock;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -29,6 +32,11 @@ public class SynchronizedLearn {
     public static synchronized void  test4(){
     }
     public int  test5(){
+        Map<String,SynchronizedLearn> m =  new HashMap<>();
+        m.forEach((k,v)->{
+
+        });
+       // System.out.println(Arrays.toString());
         synchronized (SynchronizedLearn.class){
             i++;
         }

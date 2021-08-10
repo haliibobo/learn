@@ -1,12 +1,11 @@
 package com.github.haliibobo.learn.java.tree;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.*;
 
 /**
- * 中序遍历
+ * 层次遍历
  */
-public class LNR {
+public class LEVEL {
     /**
      *            1
      *           / \
@@ -53,23 +52,27 @@ public class LNR {
         }
     }
 
-    //非递归中序遍历二叉树
+    //非递归层次遍历二叉树
     private static void nonRecurInTraverse(TreeNode root) {
         if (root == null) {
             return;
         }
-        Deque<TreeNode> deque = new ArrayDeque<>();
-        while (root!=null || !deque.isEmpty()){
-            while (root!=null) {
-                deque.push(root);
-                root  = root.left;
-            }
-           if (!deque.isEmpty()){
-               TreeNode node = deque.pop();
-                System.out.print(node.val + " ");
-                root = node.right;
+        List<Integer> list = new ArrayList<>();
+        Deque<TreeNode> treeNodes = new ArrayDeque<>();
+        treeNodes.push(root);
+        while (!treeNodes.isEmpty()){
+            int size = treeNodes.size();
+            for (int i = 0; i < size; i++) {
+                TreeNode node = treeNodes.pop();
+                list.add(node.val);
+                if (node.left !=null) {
+                    treeNodes.add(node.left);
+                }
+                if (node.right !=null) {
+                    treeNodes.add(node.right);
+                }
             }
         }
+        System.out.print(Arrays.toString(list.toArray()));
     }
-
 }

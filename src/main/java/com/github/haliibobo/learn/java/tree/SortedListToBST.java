@@ -79,13 +79,13 @@ public class SortedListToBST {
             head = head.next;
         }
 
-        return bulid(0,list.size()-1,list);
+        return build(0,list.size()-1,list);
 
 
 
     }
 
-    private TreeNode  bulid(int left,int right,List<Integer> list){
+    private TreeNode build(int left, int right, List<Integer> list){
 
         if (left > right){
             return null;
@@ -94,9 +94,9 @@ public class SortedListToBST {
         int mid = left +(right -left)/2;
         TreeNode root = new TreeNode(list.get(mid));
 
-        root.left = bulid( left,mid-1,list);
+        root.left = build( left,mid-1,list);
 
-        root.right = bulid( mid+1,right,list);
+        root.right = build( mid+1,right,list);
 
         return root;
 
